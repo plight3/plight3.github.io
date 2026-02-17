@@ -1,4 +1,5 @@
-<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content="&lt;p&gt;写一篇博客来介绍这个博客是如何搭建和部署的。&lt;/p&gt;"/><title>hexo静态博客搭建与部署
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content="&lt;hr&gt;
+&lt;p&gt;写一篇博客来介绍这个博客是如何搭建和部署的。&lt;/p&gt;"/><title>hexo静态博客搭建与部署
 -
 plight3's blog
 -
@@ -23,7 +24,8 @@ plight3's blog
 <i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/">hexo静态博客搭建与部署</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2026-02-18 00:13:03" datetime="2026-02-18T00:13:03.000Z">2026-02-18</time></div>|
 <div class="post-tag"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/blog/" rel="tag">blog</a></li></ul></div>
 <div class="post-visit"><span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv"></span>hits</span></div></div><div class="post-info"><div class="post-word-count">This article contains 1,983 words.</div>
-</div><div class="article-entry" itemprop="articleBody"><p>写一篇博客来介绍这个博客是如何搭建和部署的。</p>
+</div><div class="article-entry" itemprop="articleBody"><hr>
+<p>写一篇博客来介绍这个博客是如何搭建和部署的。</p>
 <span id="more"></span>
 <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><h2 id="需要准备的工具"><a href="#需要准备的工具" class="headerlink" title="需要准备的工具"></a>需要准备的工具</h2><ul>
 <li>nodejs 运行环境：hexo 静态博客依赖 node 环境</li>
@@ -35,7 +37,7 @@ plight3's blog
 <ul>
 <li>权限设置为private</li>
 </ul>
-<p>  <img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image.png" alt="image.png">
+<p>  <img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image.png" alt="image.png">
   </p>
 </li>
 <li><p>用户名.github.io （用户名为你github的用户名，后缀必须为github.io），用于存放博客页面</p>
@@ -44,7 +46,7 @@ plight3's blog
 </ul>
 </li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%201.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%201.png" alt="image.png"></p>
 <h2 id="hexo-安装"><a href="#hexo-安装" class="headerlink" title="hexo 安装"></a>hexo 安装</h2><p>新建 hexo_blog 文件夹，用于存放博客源码，在文件夹里打开命令行：</p>
 <ul>
 <li>安装hexo环境：<ul>
@@ -62,7 +64,7 @@ plight3's blog
 </ul>
 </li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%202.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%202.png" alt="image.png"></p>
 <ul>
 <li>关联github上用于存放博客源码的仓库：<ul>
 <li><code>git init</code></li>
@@ -76,9 +78,9 @@ plight3's blog
 <h1 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h1><p>经过之前的步骤，hexo博客在本地搭建成功了，下面介绍如何将博客部署到github页面上。</p>
 <h2 id="部署到github"><a href="#部署到github" class="headerlink" title="部署到github"></a>部署到github</h2><ul>
 <li>在博客目录下安装部署工具 <code>npm install hexo-deployer-git --save</code></li>
-<li>修改博客目录下的_config.yml文件，添加需要部署的github地址（博客页面仓库，<a href="mailto:&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#117;&#x62;&#x2e;&#x63;&#111;&#109;">git@github.com</a>&#x2F;username:username.github.io）</li>
+<li>修改博客目录下的_config.yml文件，添加需要部署的github地址（博客页面仓库，<a href="mailto:&#x67;&#105;&#116;&#64;&#103;&#105;&#116;&#x68;&#117;&#x62;&#46;&#x63;&#x6f;&#x6d;">git@github.com</a>&#x2F;username:username.github.io）</li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%203.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%203.png" alt="image.png"></p>
 <ul>
 <li>执行 <code>hexo g</code> 和 <code>hexo d</code> 将博客页面部署到github仓库中（需要配置github的ssh key）</li>
 <li>上述步骤完成后，访问 username.github.io 即可看到博客网页</li>
@@ -109,7 +111,7 @@ plight3's blog
 </li>
 <li>删除右上角的about菜单和页面下方的备案信息</li>
 </ul>
-<p>  <img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%204.png" alt="image.png">
+<p>  <img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%204.png" alt="image.png">
   </p>
 </li>
 <li><p>重新部署之后，页面如下（hexo clean &amp;&amp; hexo g &amp;&amp; hexo d），目前还有3处比较奇怪</p>
@@ -118,24 +120,24 @@ plight3's blog
 <li>页脚的访问信息统计（PV是指访问次数，UV是指访问人数）</li>
 <li>页脚的作者名</li>
 </ul>
-<p>  <img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%205.png" alt="image.png">
+<p>  <img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%205.png" alt="image.png">
   </p>
 </li>
 <li><p>修改博客源码目录下的_config.xml，设置左上角的页面名称和页脚的作者信息</p>
 </li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%206.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%206.png" alt="image.png"></p>
 <ul>
 <li>修改 themes&#x2F;hexo-theme-yuzu&#x2F;layout&#x2F;_partial&#x2F;visit-count&#x2F;site-container.pug，将PV修改为views，UV修改为visits</li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%207.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%207.png" alt="image.png"></p>
 <ul>
 <li>点击页面上的tags标签时会出现404，通过查看主题仓库中的issue，解决方法如下：<ul>
 <li>执行 hexo new page tags 命令，在生成的source&#x2F;tags&#x2F;index.md文件中添加 layout: tags</li>
 </ul>
 </li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%208.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%208.png" alt="image.png"></p>
 <ul>
 <li>网页的图标存放在 themes&#x2F;hexo-theme-yuzu&#x2F;source&#x2F;img&#x2F;favicon.ico，可以对其进行修改</li>
 </ul>
@@ -150,8 +152,8 @@ plight3's blog
 </ul>
 </li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%209.png" alt="image.png"></p>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2010.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%209.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2010.png" alt="image.png"></p>
 <ul>
 <li>文章中使用图片<ul>
 <li>修改博客源码目录下的_config.yml，将post_asset_folder设置为true<ul>
@@ -166,7 +168,7 @@ plight3's blog
 </ul>
 </li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2011.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2011.png" alt="image.png"></p>
 <h2 id="自动部署"><a href="#自动部署" class="headerlink" title="自动部署"></a>自动部署</h2><p>手动部署依赖node和hexo-cli环境，自动部署只需要将博客的markdown文件push到博客源码仓库中就可以自动编译并上传到博客页面仓库，从而在username.github.io中显示。</p>
 <ul>
 <li>在本地创建用于部署的密钥对： <code>ssh-keygen -t ed25519 -C &quot;deploy-key-for-my-blog&quot; -f &quot;deploy_key&quot;</code><ul>
@@ -176,11 +178,11 @@ plight3's blog
 </li>
 <li>将私钥复制后粘贴到博客源码仓库（私有仓库）</li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2012.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2012.png" alt="image.png"></p>
 <ul>
 <li>将公钥复制后粘贴到博客页面仓库（公有仓库，仓库名为username.github.io）</li>
 </ul>
-<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2013.png" alt="image.png"></p>
+<p><img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2013.png" alt="image.png"></p>
 <ul>
 <li>在本地博客源码目录下新建<code>.github/workflows/deploy.yml</code>，用于描述部署步骤<ul>
 <li>将下面yaml文本中的 <your_username>和<your_email_username>，修改为你github实际使用的username和email（email前缀可以在github→settings→emails中查看，在页面中找到email后缀为@users.noreply.github.com的email前缀）</li>
@@ -198,7 +200,7 @@ plight3's blog
 <li><code>git commit -m &quot;hexo init&quot;</code> 本地提交</li>
 <li><code>git push</code> 推送到github仓库，并触发自动部署</li>
 </ul>
-<p>  <img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2014.png" alt="image.png">
+<p>  <img src="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2014.png" alt="image.png">
   </p>
 </li>
 <li><p>之后只需要将新写的博客push到博客源码仓库中，就可以自动触发部署。部署逻辑为：</p>
