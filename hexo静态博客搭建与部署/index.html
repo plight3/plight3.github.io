@@ -1,0 +1,255 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content="&lt;p&gt;写一篇博客来介绍这个博客是如何搭建和部署的。&lt;/p&gt;"/><title>hexo静态博客搭建与部署
+-
+plight3's blog
+-
+
+</title><link rel="icon" href="/img/favicon.ico"/>
+<link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/helpers.css">
+
+<script src="/js/clipboard/clipboard.min.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+<script async="async" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 8.1.1"></head><body><div class="loading-wrapper" data-loading="data-loading"><div class="loading"><span></span><span></span><span></span></div></div><div class="page" data-filter="data-filter"><div class="head" data-show="data-show"><header class="head-header"><div class="head-author"><a class="head-author-link" href="/">plight3's blog</a></div><div class="head-right"><button class="bar-wrap" id="bar-wrap-toggle" title="menu button"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button><div class="head-item"><a class="search-button head-item-link"><span>Search</span>
+<i class="icon icon-search"></i></a></div><div class="head-item"></div></div></header>
+<div class="menubar-head" id="menubar"><ul class="menubar-ul"><li class="menubar-item"><i class="icon icon-chevron-right"></i>
+<a class="menubar-link" href="/categories/Security-Learning/">Security-Learning</a></li><li class="menubar-item"><i class="icon icon-chevron-right"></i>
+<a class="menubar-link" href="/categories/Misc/">Misc</a></li><li class="menubar-item" data-border="data-border"></li><li class="menubar-item"><i class="icon icon-archive"></i>
+<a class="menubar-link" href="/archives">Archives</a></li><li class="menubar-item"><i class="icon icon-tags"></i>
+<a class="menubar-link" href="/tags">Tags</a></li></ul><div class="menu-search-box search-button"><div>Search</div>
+<i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/">hexo静态博客搭建与部署</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2026-02-18 00:13:03" datetime="2026-02-18T00:13:03.000Z">2026-02-18</time></div>|
+<div class="post-tag"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/blog/" rel="tag">blog</a></li></ul></div>
+<div class="post-visit"><span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv"></span>hits</span></div></div><div class="post-info"><div class="post-word-count">This article contains 1,983 words.</div>
+</div><div class="article-entry" itemprop="articleBody"><p>写一篇博客来介绍这个博客是如何搭建和部署的。</p>
+<span id="more"></span>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><h2 id="需要准备的工具"><a href="#需要准备的工具" class="headerlink" title="需要准备的工具"></a>需要准备的工具</h2><ul>
+<li>nodejs 运行环境：hexo 静态博客依赖 node 环境</li>
+<li>git 命令行工具：用于部署在 github 中，省略github的基本配置（如添加ssh-key、设置user.name 和 user.email）</li>
+</ul>
+<h2 id="仓库创建"><a href="#仓库创建" class="headerlink" title="仓库创建"></a>仓库创建</h2><p>创建两个仓库：</p>
+<ul>
+<li><p>hexo_blog （名字随意），仓库用于存放博客的源码以及原始的markdown文档</p>
+<ul>
+<li>权限设置为private</li>
+</ul>
+<p>  <img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image.png" alt="image.png">
+  </p>
+</li>
+<li><p>用户名.github.io （用户名为你github的用户名，后缀必须为github.io），用于存放博客页面</p>
+<ul>
+<li>博客网页需要给别人展示，所以权限设置为public</li>
+</ul>
+</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%201.png" alt="image.png"></p>
+<h2 id="hexo-安装"><a href="#hexo-安装" class="headerlink" title="hexo 安装"></a>hexo 安装</h2><p>新建 hexo_blog 文件夹，用于存放博客源码，在文件夹里打开命令行：</p>
+<ul>
+<li>安装hexo环境：<ul>
+<li><code>npm install -g hexo-cli</code><ul>
+<li>安装成功后通过 <code>hexo --version</code> 查看版本</li>
+</ul>
+</li>
+<li><code>hexo init</code>   在当前目录下初始化hexo环境</li>
+<li><code>npm install</code> 安装需要的node组件</li>
+<li><code>hexo g</code>   生成静态网页</li>
+<li><code>hexo s</code>   开启本地web预览页面，查看博客页面<ul>
+<li>默认开启本地4000端口</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%202.png" alt="image.png"></p>
+<ul>
+<li>关联github上用于存放博客源码的仓库：<ul>
+<li><code>git init</code></li>
+<li><code>git branch -M main</code>   将本地主分支名修改为main，与github仓库中保持一致，如果github中默认的主分支被修改为master，此步骤可省略</li>
+<li><code>git remote add origin git@github.com:username/hexo_blog.git</code>  username改成你使用的github用户名，需要先配置好github使用的ssh key</li>
+<li><code>git pull origin main</code>  从github仓库拉取文件</li>
+<li><code>git branch --set-upstream-to=origin/main main</code>  将github上的main分支和本地的main分支绑定</li>
+</ul>
+</li>
+</ul>
+<h1 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h1><p>经过之前的步骤，hexo博客在本地搭建成功了，下面介绍如何将博客部署到github页面上。</p>
+<h2 id="部署到github"><a href="#部署到github" class="headerlink" title="部署到github"></a>部署到github</h2><ul>
+<li>在博客目录下安装部署工具 <code>npm install hexo-deployer-git --save</code></li>
+<li>修改博客目录下的_config.yml文件，添加需要部署的github地址（博客页面仓库，<a href="mailto:&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#117;&#x62;&#x2e;&#x63;&#111;&#109;">git@github.com</a>&#x2F;username:username.github.io）</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%203.png" alt="image.png"></p>
+<ul>
+<li>执行 <code>hexo g</code> 和 <code>hexo d</code> 将博客页面部署到github仓库中（需要配置github的ssh key）</li>
+<li>上述步骤完成后，访问 username.github.io 即可看到博客网页</li>
+</ul>
+<h2 id="主题更换"><a href="#主题更换" class="headerlink" title="主题更换"></a>主题更换</h2><p>除了默认的博客主题外，可以在主题仓库中挑选喜欢的主题，并按照提供的步骤进行安装：</p>
+<ul>
+<li>官方主题仓库：<a target="_blank" rel="noopener" href="https://hexo.io/themes/">https://hexo.io/themes/</a></li>
+<li>本博客使用的主题：<a target="_blank" rel="noopener" href="https://github.com/Cerallin/hexo-theme-yuzu">https://github.com/Cerallin/hexo-theme-yuzu</a></li>
+</ul>
+<p>安装步骤：</p>
+<ul>
+<li>安装主题与必要的依赖</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 在hexo网站源码目录下执行</span><br><span class="line">npm i hexo-renderer-pug</span><br><span class="line">npm install hexo-generator-search --save</span><br><span class="line">mkdir -p themes &amp;&amp; cd themes</span><br><span class="line">git clone https://github.com/Cerallin/hexo-theme-yuzu</span><br><span class="line">rm -rf hexo-theme-yuzu/.git/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>修改网站根目录下的 _config.yml。将 _config.yml中 theme字段改为hexo-theme-yuzu。将主题文件夹下_root_config_example.yml的内容添加到_config.yml中</p>
+</li>
+<li><p>此主题比较简洁配置起来也比较方便</p>
+<ul>
+<li>设置博客的起始年份，会在页脚显示：起始年-当前年</li>
+<li>删除文章内容里的版权声明</li>
+<li>侧边栏一共有3种组件，可以修改页面上显示的名称和排列顺序：<ul>
+<li>Archives 按日期统计文章</li>
+<li>Posts 按分类统计文章</li>
+<li>Tags 按标签统计文章</li>
+</ul>
+</li>
+<li>删除右上角的about菜单和页面下方的备案信息</li>
+</ul>
+<p>  <img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%204.png" alt="image.png">
+  </p>
+</li>
+<li><p>重新部署之后，页面如下（hexo clean &amp;&amp; hexo g &amp;&amp; hexo d），目前还有3处比较奇怪</p>
+<ul>
+<li>左上角的页面名称</li>
+<li>页脚的访问信息统计（PV是指访问次数，UV是指访问人数）</li>
+<li>页脚的作者名</li>
+</ul>
+<p>  <img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%205.png" alt="image.png">
+  </p>
+</li>
+<li><p>修改博客源码目录下的_config.xml，设置左上角的页面名称和页脚的作者信息</p>
+</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%206.png" alt="image.png"></p>
+<ul>
+<li>修改 themes&#x2F;hexo-theme-yuzu&#x2F;layout&#x2F;_partial&#x2F;visit-count&#x2F;site-container.pug，将PV修改为views，UV修改为visits</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%207.png" alt="image.png"></p>
+<ul>
+<li>点击页面上的tags标签时会出现404，通过查看主题仓库中的issue，解决方法如下：<ul>
+<li>执行 hexo new page tags 命令，在生成的source&#x2F;tags&#x2F;index.md文件中添加 layout: tags</li>
+</ul>
+</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%208.png" alt="image.png"></p>
+<ul>
+<li>网页的图标存放在 themes&#x2F;hexo-theme-yuzu&#x2F;source&#x2F;img&#x2F;favicon.ico，可以对其进行修改</li>
+</ul>
+<h2 id="文章发布"><a href="#文章发布" class="headerlink" title="文章发布"></a>文章发布</h2><ul>
+<li>将markdown和其同名的图片文件夹放到 source&#x2F;_posts&#x2F; 目录下再进行部署，即可完成文章发布</li>
+<li>文章前面可以写一些元信息，用于标识发布日期、分类、标签、摘要等信息并显示在页面上<ul>
+<li>title   文章标题</li>
+<li>date  发布日期</li>
+<li>categories  文章分类，可以有多个（显示在首页对应名称的posts组件上）</li>
+<li>tags  文章标签 ，可以有多个</li>
+<li>摘要使用more标签进行分割</li>
+</ul>
+</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%209.png" alt="image.png"></p>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2010.png" alt="image.png"></p>
+<ul>
+<li>文章中使用图片<ul>
+<li>修改博客源码目录下的_config.yml，将post_asset_folder设置为true<ul>
+<li>编译后会将markdown和图片放入同一个文件夹内</li>
+</ul>
+</li>
+<li>将图片放入 source&#x2F;_posts&#x2F; 目录下与当前文章的markdown同名的文件夹下</li>
+<li>在文章中引用  <img src="/%E6%96%87%E4%BB%B6%E5%A4%B9%E5%90%8D/%E5%9B%BE%E7%89%87">，此时生成的图片URL相对路径为 &#x2F;文件夹名&#x2F;图片<ul>
+<li>默认情况下编译出来的博客内容URL为 年&#x2F;月&#x2F;日&#x2F;文件夹名，因此此时图片无法正常访问，需要修改 _config.yml，将编译出来的博客URL改为 &#x2F;文件夹名&#x2F;</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2011.png" alt="image.png"></p>
+<h2 id="自动部署"><a href="#自动部署" class="headerlink" title="自动部署"></a>自动部署</h2><p>手动部署依赖node和hexo-cli环境，自动部署只需要将博客的markdown文件push到博客源码仓库中就可以自动编译并上传到博客页面仓库，从而在username.github.io中显示。</p>
+<ul>
+<li>在本地创建用于部署的密钥对： <code>ssh-keygen -t ed25519 -C &quot;deploy-key-for-my-blog&quot; -f &quot;deploy_key&quot;</code><ul>
+<li><code>deploy_key</code>(私钥)</li>
+<li><code>deploy_key.pub</code>(公钥)</li>
+</ul>
+</li>
+<li>将私钥复制后粘贴到博客源码仓库（私有仓库）</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2012.png" alt="image.png"></p>
+<ul>
+<li>将公钥复制后粘贴到博客页面仓库（公有仓库，仓库名为username.github.io）</li>
+</ul>
+<p><img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2013.png" alt="image.png"></p>
+<ul>
+<li>在本地博客源码目录下新建<code>.github/workflows/deploy.yml</code>，用于描述部署步骤<ul>
+<li>将下面yaml文本中的 <your_username>和<your_email_username>，修改为你github实际使用的username和email（email前缀可以在github→settings→emails中查看，在页面中找到email后缀为@users.noreply.github.com的email前缀）</li>
+<li>yaml文本中的 SSH_DEPLOY_KEY 需要和前面在私有仓库中添加secret key时取的名字相同（变为大写）</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">deploy-to-blog-repo</span></span><br><span class="line"><span class="attr">run-name:</span> <span class="string">$&#123;&#123;</span> <span class="string">github.actor</span> <span class="string">&#125;&#125;</span> </span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">main</span></span><br><span class="line"></span><br><span class="line"><span class="attr">permissions:</span></span><br><span class="line">  <span class="attr">contents:</span> <span class="string">read</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">fetch-depth:</span> <span class="number">1</span></span><br><span class="line">          <span class="attr">submodules:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Setup</span> <span class="string">Node.js</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/setup-node@v4</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">node-version:</span> <span class="number">20</span></span><br><span class="line">          <span class="attr">cache:</span> <span class="string">&#x27;npm&#x27;</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">dependencies</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">npm</span> <span class="string">ci</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">pug</span> <span class="string">&amp;</span> <span class="string">stylus</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-renderer-pug</span> <span class="string">hexo-renderer-stylus</span> <span class="string">--save</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Upload</span> <span class="string">Pages</span> <span class="string">artifact</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/upload-artifact@v4</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">my-artifact</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">./public</span></span><br><span class="line">          <span class="attr">retention-days:</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">deploy:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">deploy</span> <span class="string">blog</span></span><br><span class="line">    <span class="attr">needs:</span> <span class="string">build</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">permissions:</span></span><br><span class="line">      <span class="attr">contents:</span> <span class="string">write</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Download</span> <span class="string">Pages</span> <span class="string">artifact</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/download-artifact@v4</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">my-artifact</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">./public</span></span><br><span class="line">    </span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Push</span> <span class="string">Pages</span> <span class="string">to</span> <span class="string">blog</span> <span class="string">repository</span></span><br><span class="line">        <span class="attr">id:</span> <span class="string">deploy</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">cpina/github-action-push-to-another-repository@v1.7.3</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">SSH_DEPLOY_KEY:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.PRIVATE_KEY_FOR_HEXO</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">source-directory:</span> <span class="string">&#x27;public&#x27;</span></span><br><span class="line">          <span class="attr">destination-github-username:</span> <span class="string">&#x27;&lt;your_username&gt;&#x27;</span></span><br><span class="line">          <span class="attr">destination-repository-name:</span> <span class="string">&#x27;&lt;your_username&gt;.github.io&#x27;</span></span><br><span class="line">          <span class="attr">user-email:</span> <span class="string">&lt;your_email_username&gt;@users.noreply.github.com</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>执行下面的git命令，将博客源码同步到私有仓库，并触发自动部署。私有仓库页面的 Actions中可以看到正在执行的部署任务，点击进去可以看到部署过程中产生的日志。</p>
+<ul>
+<li><code>git add *</code>   添加所有博客源码</li>
+<li><code>git add .github/</code>  添加部署说明文件</li>
+<li><code>git commit -m &quot;hexo init&quot;</code> 本地提交</li>
+<li><code>git push</code> 推送到github仓库，并触发自动部署</li>
+</ul>
+<p>  <img src="/hexo%20%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%83%A8%E7%BD%B2/image%2014.png" alt="image.png">
+  </p>
+</li>
+<li><p>之后只需要将新写的博客push到博客源码仓库中，就可以自动触发部署。部署逻辑为：</p>
+<ul>
+<li>本地博客源码目录push到远程的博客源码仓库中（私有仓库）</li>
+<li>私有仓库中按照.github&#x2F;workflows&#x2F;deploy.yml 步骤执行并部署到公有仓库（username.github.io）中<ul>
+<li>deploy.yml 中安装了hexo的node编译环境</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2446578">https://cloud.tencent.com/developer/article/2446578</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.qulluq.com/hexo-tutorial-4-github-actions-deploy/index.html">https://blog.qulluq.com/hexo-tutorial-4-github-actions-deploy/index.html</a></li>
+</ul>
+</div></article><aside class="post-widget"><h4>In this article</h4><nav class="post-toc-wrap" id="post-toc"><ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%AE%89%E8%A3%85"><span class="post-toc-number">1.</span> <span class="post-toc-text">安装</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E9%9C%80%E8%A6%81%E5%87%86%E5%A4%87%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">需要准备的工具</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%BB%93%E5%BA%93%E5%88%9B%E5%BB%BA"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">仓库创建</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#hexo-%E5%AE%89%E8%A3%85"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">hexo 安装</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E9%83%A8%E7%BD%B2"><span class="post-toc-number">2.</span> <span class="post-toc-text">部署</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E9%83%A8%E7%BD%B2%E5%88%B0github"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">部署到github</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E4%B8%BB%E9%A2%98%E6%9B%B4%E6%8D%A2"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">主题更换</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E6%96%87%E7%AB%A0%E5%8F%91%E5%B8%83"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">文章发布</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">自动部署</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="post-toc-number">3.</span> <span class="post-toc-text">参考文章</span></a></li></ol></nav></aside></div><footer class="footer-nav"><div class="footer"><div class="back-top" id="back-top" title="Back to top"><i class="icon icon-chevron-bar-up"></i></div><div class="footer-content"><div><span id="busuanzi_container_site_pv"><span id="busuanzi_value_site_pv">?</span>
+views
+</span><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">?</span>
+visits</span></div>
+
+Copyright &copy;
+2025<span class="time-divide">-</span>2026
+plight3.
+
+Power by
+<a href="https://hexo.io/" target="_blank" rel="external nofollow">Hexo</a>
+and
+<a href="https://github.com/Cerallin/hexo-theme-yuzu" target="_blank" rel="external nofollow" title="v3.2.7">Theme Yuzu</a>.</div></div></footer>
+<script>window.config = {
+  url_root: '/',
+  meta_path: 'meta.json',
+};
+</script>
+<script src="/js/theme/back-to-top.js"></script>
+
+
+<script src="/js/theme/clipboard.js"></script>
+
+
+<script src="/js/theme/loading.js"></script>
+
+
+<script src="/js/theme/navbar.js"></script>
+
+<script src="/js/theme/search.js"></script>
+
+<script src="/js/theme/toc.js"></script>
+<script>window.onload = function () {
+  for (const moduleName in Theme) {
+    const module = Theme[moduleName];
+    module.register();
+  }
+};</script></div><div class="search-modal" id="search-modal"><div class="card"><div class="card-head"><div class="search-box"><input class="search-input" id="search-input" placeholder="search"/><div class="search-button" id="search-button"><div class="icon icon-search"></div></div></div><div class="close-button"><div class="icon icon-x"></div></div></div><div class="card-body"><div class="search-count">search.total<span id="search-count-num">0</span>search result(s) in total.</div><div class="search-result" id="search-result"></div></div></div></div></body></html>
