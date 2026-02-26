@@ -21,7 +21,7 @@ plight3's blog
 <a class="menubar-link" href="/categories/Misc/">Misc</a></li><li class="menubar-item" data-border="data-border"></li><li class="menubar-item"><i class="icon icon-archive"></i>
 <a class="menubar-link" href="/archives">Archives</a></li><li class="menubar-item"><i class="icon icon-tags"></i>
 <a class="menubar-link" href="/tags">Tags</a></li></ul><div class="menu-search-box search-button"><div>Search</div>
-<i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8%20176d9913334a80bba9a7f66a7ae77b6d/">通过源码学习peach的使用</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2025-05-31 02:30:00" datetime="2025-05-31T02:30:00.000Z">2025-05-31</time></div>|
+<i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/">通过源码学习peach的使用</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2025-05-31 02:30:00" datetime="2025-05-31T02:30:00.000Z">2025-05-31</time></div>|
 <div class="post-tag"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/graybox-fuzz/" rel="tag">graybox-fuzz</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/peach/" rel="tag">peach</a></li></ul></div>
 <div class="post-visit"><span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv"></span>hits</span></div></div><div class="post-info"><div class="post-word-count">This article contains 5,287 words.</div>
 </div><div class="article-entry" itemprop="articleBody"><hr>
@@ -47,10 +47,10 @@ plight3's blog
 </ol>
 <h2 id="IDE-使用"><a href="#IDE-使用" class="headerlink" title="IDE 使用"></a>IDE 使用</h2><p>参考文章 <a target="_blank" rel="noopener" href="https://cartermgj.github.io/2018/02/02/peach-source/">https://cartermgj.github.io/2018/02/02/peach-source/</a>  ，使用命令 <code>waf.bat msvs2017</code> 生成 sln 文件。</p>
 <p>按照文章中所描述的，将启动项目设为 peach</p>
-<p><img src="/image.png" alt="image.png"></p>
-<p><img src="/image%201.png" alt="image.png"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/image.png" alt="image.png"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/image%201.png" alt="image.png"></p>
 <p>为 peach 项目的命令行参数指定 pit 文件，即可调试运行</p>
-<p><img src="/image%202.png" alt="image.png"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/image%202.png" alt="image.png"></p>
 <h1 id="基本元素"><a href="#基本元素" class="headerlink" title="基本元素"></a>基本元素</h1><p>peach 运行需要指定一个 xml 格式的 pit 文件，此文件主要描述了 fuzz 过程中使用的协议格式、状态模型、测试目标。下面是一个最简单的 pit 文件，只包含必须要有的元素：</p>
 <ol>
 <li>DataModel: 用于定义协议的格式</li>
@@ -118,7 +118,7 @@ plight3's blog
 <li>alignedTo: 指定哪个元素需要对齐，不指定则对齐父元素</li>
 <li>minSize: 最少填充的 bit，默认 0。满足最少填充数的前提下，再满足对齐要求</li>
 </ol>
-<p><img src="/image%203.png" alt="image.png"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/image%203.png" alt="image.png"></p>
 <h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p>定义一个字符串，关键参数如下：</p>
 <ol>
 <li>length: 长度。nullTerminated 为 true 时可以不指定长度。只有当 length 不指定、nullTerminated 为 true，或者 lengthType 为 chars、length 指定时字符串长度才是确定的。因为有些编码中一个字符可能占多个 bytes，如果不能表示完整的字符会报错</li>
@@ -129,8 +129,8 @@ plight3's blog
 <li>value: 默认值，默认空</li>
 <li>valueType: value 的数据格式，默认 string</li>
 </ol>
-<p><img src="/image%204.png" alt="image.png"></p>
-<p><img src="/image%205.png" alt="image.png"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/image%204.png" alt="image.png"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/image%205.png" alt="image.png"></p>
 <h2 id="Relation"><a href="#Relation" class="headerlink" title="Relation"></a>Relation</h2><p>Relation 标签用于统计其它字段的内容信息，如计算其它字段的长度、变异时的重复次数、数据包中相对于某个字段的偏移。</p>
 <h3 id="长度"><a href="#长度" class="headerlink" title="长度"></a>长度</h3><p>Relation的type为size时可以计算指定元素的长度（字节为单位），语法为<Relation type=”size” of=”需要计算长度的元素名（可以指定单个元素或Block）”></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;DataModel name=<span class="string">&quot;Header&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">	&lt;Block name=<span class="string">&quot;Header&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">	  &lt;Number name=<span class="string">&quot;len&quot;</span> size=<span class="string">&quot;16&quot;</span> value=<span class="string">&quot;0006&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">		&lt;Relation <span class="built_in">type</span>=<span class="string">&quot;size&quot;</span> of=<span class="string">&quot;PDU&quot;</span> /&gt;</span><br><span class="line">	  &lt;/Number&gt;</span><br><span class="line">	  &lt;Block name=<span class="string">&quot;PDU&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">		  &lt;Number name=<span class="string">&quot;func_code&quot;</span> size=<span class="string">&quot;16&quot;</span> value=<span class="string">&quot;00 01&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;false&quot;</span> /&gt;</span><br><span class="line">		  &lt;Number name=<span class="string">&quot;start_addr&quot;</span> size=<span class="string">&quot;16&quot;</span> value=<span class="string">&quot;3006&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;false&quot;</span> /&gt;</span><br><span class="line">		  &lt;Number name=<span class="string">&quot;qty&quot;</span> size=<span class="string">&quot;16&quot;</span> value=<span class="string">&quot;00 01&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;true&quot;</span> /&gt;</span><br><span class="line">		&lt;/Block&gt;</span><br><span class="line">	&lt;/Block&gt;</span><br><span class="line">&lt;/DataModel&gt;</span><br></pre></td></tr></table></figure>
@@ -184,12 +184,12 @@ plight3's blog
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;Test name=<span class="string">&quot;Default&quot;</span>&gt;</span><br><span class="line">    &lt;StateModel ref=<span class="string">&quot;stateModel1&quot;</span> /&gt;</span><br><span class="line">    &lt;Publisher ref=<span class="string">&quot;publisher1&quot;</span> /&gt;</span><br><span class="line">    &lt;Mutators mode=<span class="string">&quot;exclude&quot;</span>&gt;</span><br><span class="line">        &lt;Mutator <span class="keyword">class</span>=<span class="string">&quot;DataElementDuplicate&quot;</span>/&gt;</span><br><span class="line">        &lt;Mutator <span class="keyword">class</span>=<span class="string">&quot;DataElementRemove&quot;</span>/&gt;</span><br><span class="line">        &lt;Mutator <span class="keyword">class</span>=<span class="string">&quot;DataElementSwapNearNodes&quot;</span>/&gt;</span><br><span class="line">        &lt;Mutator <span class="keyword">class</span>=<span class="string">&quot;DataElementSwapNear&quot;</span>/&gt;</span><br><span class="line">    &lt;/Mutators&gt;</span><br><span class="line">&lt;/Test&gt;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/image%206.png" alt="image.png"></p>
-<p><img src="/image%207.png" alt="image.png"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/image%206.png" alt="image.png"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/image%207.png" alt="image.png"></p>
 <ul>
 <li>第一个数据包为定义的原始数据包，不会进行变异，此阶段用来准备变异器为后续数据包变异做准备。</li>
 </ul>
-<p><img src="/image%208.png" alt="image.png"></p>
+<p><img src="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8/image%208.png" alt="image.png"></p>
 <h2 id="StateMutator"><a href="#StateMutator" class="headerlink" title="StateMutator"></a>StateMutator</h2><ol>
 <li>ActionDuplicate</li>
 <li>ActionRemove</li>

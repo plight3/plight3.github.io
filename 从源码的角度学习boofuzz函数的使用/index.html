@@ -21,7 +21,7 @@ plight3's blog
 <a class="menubar-link" href="/categories/Misc/">Misc</a></li><li class="menubar-item" data-border="data-border"></li><li class="menubar-item"><i class="icon icon-archive"></i>
 <a class="menubar-link" href="/archives">Archives</a></li><li class="menubar-item"><i class="icon icon-tags"></i>
 <a class="menubar-link" href="/tags">Tags</a></li></ul><div class="menu-search-box search-button"><div>Search</div>
-<i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0%20boofuzz%20%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8%2014ed9913334a8072aa3fdab420bd6179/">从源码的角度学习 boofuzz 函数的使用</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2024-12-05 01:05:00" datetime="2024-12-05T01:05:00.000Z">2024-12-05</time></div>|
+<i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/">从源码的角度学习 boofuzz 函数的使用</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2024-12-05 01:05:00" datetime="2024-12-05T01:05:00.000Z">2024-12-05</time></div>|
 <div class="post-tag"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/boofuzz/" rel="tag">boofuzz</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/graybox-fuzz/" rel="tag">graybox-fuzz</a></li></ul></div>
 <div class="post-visit"><span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv"></span>hits</span></div></div><div class="post-info"><div class="post-word-count">This article contains 3,065 words.</div>
 </div><div class="article-entry" itemprop="articleBody"><hr>
@@ -35,7 +35,7 @@ plight3's blog
 <p>基于生成的模糊测试方法基本都是黑盒的，无法通过覆盖率来筛选出优秀的测试用例作为种子来进行变异。这类方法只能对测试用例的每个字段进行生成，新测试用例的产生与旧的测试用例没有关系。</p>
 <p>本文介绍的 boofuzz 为基于生成的黑盒模糊测试方法，因此在后文中会用“测试用例生成”而不是“测试用例变异”来描述新测试用例的产生过程。</p>
 <h1 id="基本组成"><a href="#基本组成" class="headerlink" title="基本组成"></a>基本组成</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>boofuzz 属于网络模糊测试工具，因此 boofuzz 生成的测试用例为数据包。本文认为在 boofuzz 中一个测试用例的基本组成元素为：Request、Block、Primitive，它们之间的关系如下图所示。一个Request 代表一个测试用例，即一个数据包；Primitive(原语) 代表数据包中的一个字段，为测试用例生成的基本单元；Block 用来表示多个字段的集合，目的是为了方便对多个字段进行统一操作（如对数据包的部分字段计算长度、计算校验和等）。</p>
-<p><img src="/image.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image.png" alt="image.png"></p>
 <p>下面是一个http协议的数据包样例以及对应的boofuzz Request定义，其中：</p>
 <ol>
 <li>整个数据包就是一个Request</li>
@@ -56,7 +56,7 @@ plight3's blog
 <li>根据context_path生成qualified_name，qualified_name为context_path拼接上Block或Primitive的name</li>
 <li>Request中通过self.names字典存储所有的Block和Primitive，key为qualified_name。Primitive定义在Block下也可以通过self.names[qualified_name] 访问到</li>
 </ul>
-<p><img src="/image%201.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%201.png" alt="image.png"></p>
 <h1 id="Primitive-的生成策略"><a href="#Primitive-的生成策略" class="headerlink" title="Primitive 的生成策略"></a>Primitive 的生成策略</h1><p>本节介绍，每个Primitive的生成策略。对于每个 Primitive 都有的参数如下：</p>
 <ol>
 <li>name: 用于标识这个Primitive，不指定会自动分配（Request和Block也有此参数，用于标识它们自身）</li>
@@ -73,7 +73,7 @@ plight3's blog
 <li>如果使用全量数据，则生成从0到指定width能表示的最大值(指定max_num后，使用max_num)</li>
 <li>如果不使用全量数据，则使用一些特殊的边界值</li>
 </ol>
-<p><img src="/image%202.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%202.png" alt="image.png"></p>
 <h2 id="Byte-Word-Dword-Qword"><a href="#Byte-Word-Dword-Qword" class="headerlink" title="Byte, Word, Dword, Qword"></a>Byte, Word, Dword, Qword</h2><p>分别表示为width为8, 16, 32, 64 的 bit_field</p>
 <h2 id="Bytes"><a href="#Bytes" class="headerlink" title="Bytes"></a>Bytes</h2><p>关键参数：</p>
 <ul>
@@ -86,30 +86,30 @@ plight3's blog
 <li>使用一些特殊值，测试溢出</li>
 <li>对默认值进行重复</li>
 </ol>
-<p><img src="/image%203.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%203.png" alt="image.png"></p>
 <ol>
 <li>使用一些特殊值</li>
 </ol>
-<p><img src="/image%204.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%204.png" alt="image.png"></p>
 <ol>
 <li>将长度为1、2、4字节的特殊值依次替换原始值的每个位置</li>
 </ol>
-<p><img src="/image%205.png" alt="image.png"></p>
-<p><img src="/image%206.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%205.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%206.png" alt="image.png"></p>
 <ol>
 <li>根据size和max_len限制长度</li>
 </ol>
-<p><img src="/image%207.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%207.png" alt="image.png"></p>
 <h2 id="Delim"><a href="#Delim" class="headerlink" title="Delim"></a>Delim</h2><p>delimiter 是分隔符的意思</p>
 <p>生成策略：</p>
 <ol>
 <li>对默认值进行重复</li>
 </ol>
-<p><img src="/image%208.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%208.png" alt="image.png"></p>
 <ol>
 <li>使用特殊值</li>
 </ol>
-<p><img src="/image%209.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%209.png" alt="image.png"></p>
 <h2 id="Float"><a href="#Float" class="headerlink" title="Float"></a>Float</h2><p>关键参数：</p>
 <ol>
 <li>s_format: 格式化字符串，指定使用几位小数，默认”.1f”</li>
@@ -122,7 +122,7 @@ plight3's blog
 <li>使用默认值</li>
 <li>从f_min到f_max 随机取值</li>
 </ol>
-<p><img src="/image%2010.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2010.png" alt="image.png"></p>
 <h2 id="FromFile"><a href="#FromFile" class="headerlink" title="FromFile"></a>FromFile</h2><p>关键参数：</p>
 <ol>
 <li>filename: 文件通配符，如 <code>*.txt</code></li>
@@ -133,7 +133,7 @@ plight3's blog
 <li>使用从文件中读取的</li>
 <li>如果给定max_len，则只使用长度小于等于max_len的值</li>
 </ol>
-<p><img src="/image%2011.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2011.png" alt="image.png"></p>
 <h2 id="Mirror"><a href="#Mirror" class="headerlink" title="Mirror"></a>Mirror</h2><p>关键参数：</p>
 <ol>
 <li>primitive_name: 目标原语名称</li>
@@ -142,7 +142,7 @@ plight3's blog
 <ol>
 <li>和primitive_name对应的原语保持一致</li>
 </ol>
-<p><img src="/image%2012.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2012.png" alt="image.png"></p>
 <h2 id="RandomData"><a href="#RandomData" class="headerlink" title="RandomData"></a>RandomData</h2><p>关键参数：</p>
 <ol>
 <li>min_length: 最小长度，默认0</li>
@@ -154,7 +154,7 @@ plight3's blog
 <ol>
 <li>根据长度，随机生成0-255之间的二进制字节</li>
 </ol>
-<p><img src="/image%2013.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2013.png" alt="image.png"></p>
 <h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><p>关键参数：</p>
 <ol>
 <li>size: 长度，为None时表示随机长度，默认None</li>
@@ -166,23 +166,23 @@ plight3's blog
 <ol>
 <li>使用特殊值，测试命令注入</li>
 </ol>
-<p><img src="/image%2014.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2014.png" alt="image.png"></p>
 <ol>
 <li>将默认值分别重复2、10、100次，如果长度超出最大长度则不使用</li>
 </ol>
-<p><img src="/image%2015.png" alt="image.png"></p>
-<p><img src="/image%2016.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2015.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2016.png" alt="image.png"></p>
 <ol>
 <li>将一些特殊值扩展到边界长度（将_long_string_lengths和_long_string_deltas里的值两两相加）。或使用较大的长度</li>
 </ol>
-<p><img src="/image%2017.png" alt="image.png"></p>
-<p><img src="/image%2018.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2017.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2018.png" alt="image.png"></p>
 <ol>
 <li>特殊长度，内容全为“D”的字符串中随机插入\x00。从_long_string_lengths 中相邻两个元素之间随机取8个位置进行插入。</li>
 </ol>
-<p><img src="/image%2019.png" alt="image.png"></p>
-<p><img src="/image%2020.png" alt="image.png"></p>
-<p><img src="/image%2021.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2019.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2020.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2021.png" alt="image.png"></p>
 <ol>
 <li>根据max_len和size进行长度限制，超过max_len进行截断，小于size进行padding</li>
 </ol>
@@ -196,7 +196,7 @@ plight3's blog
 <ol>
 <li>从list中取值</li>
 </ol>
-<p><img src="/image%2022.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2022.png" alt="image.png"></p>
 <h3 id="Simple"><a href="#Simple" class="headerlink" title="Simple"></a>Simple</h3><p>关键参数：</p>
 <ol>
 <li>fuzz_values: 一个list，生成测试用例的时候从里面进行顺序选择</li>
@@ -239,46 +239,46 @@ plight3's blog
 <p>此函数用于对指定block_name Block计算</p>
 <h1 id="函数介绍"><a href="#函数介绍" class="headerlink" title="函数介绍"></a>函数介绍</h1><p>本节介绍，使用boofuzz定义Request常用的函数</p>
 <h2 id="Request-操作"><a href="#Request-操作" class="headerlink" title="Request 操作"></a>Request 操作</h2><h3 id="s-initialize"><a href="#s-initialize" class="headerlink" title="s_initialize"></a>s_initialize</h3><p>用来定义一个Request。boofuzz 使用一个全局字典blocks.REQUEST，来存储所有Request，key为Request的name。同时使用一个全局变量blocks.CURRENT来存储当前使用的Request，方便将Block和Primitive定义在对应的Request下(其它的Block和Primitive函数通过blocks.CURRENT参数来查找它们属于哪个Request)。</p>
-<p><img src="/image%2023.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2023.png" alt="image.png"></p>
 <h3 id="s-switch"><a href="#s-switch" class="headerlink" title="s_switch"></a>s_switch</h3><p>用来切换当前使用的Request，实际上就是修改blocks.CURRENT</p>
-<p><img src="/image%2024.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2024.png" alt="image.png"></p>
 <h3 id="s-get"><a href="#s-get" class="headerlink" title="s_get"></a>s_get</h3><p>根据name从全局字典blocks.REQUEST取出对应的Request，name为None则返回blocks.CURRENT对应的Request</p>
-<p><img src="/image%2025.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2025.png" alt="image.png"></p>
 <h3 id="s-update"><a href="#s-update" class="headerlink" title="s_update"></a>s_update</h3><p>关键参数：</p>
 <ol>
 <li>name: qualified_name</li>
 <li>value: 用于替换的值</li>
 </ol>
 <p>基本组成-数据结构 那一小节介绍Request使用self.names字典存储所有Block和Primitive，s_update函数根据qualified_name将对应Primitive的default_value替换成value</p>
-<p><img src="/image%2026.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2026.png" alt="image.png"></p>
 <h2 id="Block操作"><a href="#Block操作" class="headerlink" title="Block操作"></a>Block操作</h2><h3 id="s-block-start-s-block-end"><a href="#s-block-start-s-block-end" class="headerlink" title="s_block_start &amp; s_block_end"></a>s_block_start &amp; s_block_end</h3><p>基本组成-数据结构 那一小节介绍Request使用self.block_stack存储“打开”的Block，以方便为Request中的Block和Primitive生成context_path和qualified_name。</p>
 <p>s_block_start 函数用于将当前Block“打开”，即向当前Request的block_stack中存入当前Block</p>
-<p><img src="/image%2027.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2027.png" alt="image.png"></p>
 <p>s_block_end 函数用于将当前Block“关闭”，即向当前Request的block_stack中删除当前Block</p>
-<p><img src="/image%2028.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2028.png" alt="image.png"></p>
 <h3 id="s-block"><a href="#s-block" class="headerlink" title="s_block"></a>s_block</h3><p>用于定义一个Block。内部实现了 <code>__enter__</code> 和 <code>__exit__</code>   ，可以使用with s_block(name&#x3D;”xxx”)这样的语法，而不用手动调用 s_block_start 和 s_block_end。</p>
-<p><img src="/image%2029.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2029.png" alt="image.png"></p>
 <p>此函数有一个比较有用的参数 group，用于将block和其他Primitive进行绑定（通常为Group或者Simple）。boofuzz 在生成测试用例时，一次只能改变一个Primitive（boofuzz引入组合变异来让多个Primitive同时进行改变，但这种方式只能用于相邻的Primitive，此处不讨论这种情况），使用s_block的group参数可以让此Block和group对应的Primitive同时进行改变。</p>
-<p><img src="/image%2030.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2030.png" alt="image.png"></p>
 <p>下面是一个使用group参数的例子：</p>
 <ol>
 <li>定义一个Request包含一个Simple，一个Group和一个Block，Block下包含一个BitField和一个Simple。查看测试用例生成的结果：每次测试用例生成只改变一个Primitive。Group生成的是bytes，Simple生成的是str。</li>
 </ol>
-<p><img src="/image%2031.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2031.png" alt="image.png"></p>
 <ol>
 <li>给s_block一个group参数用于绑定其他Primitive。下图中，Block绑定了name为”group_field1”的Group。 可以看到，在一次测试用例的生成过程中同时改变了两个Primitive，它们的生成策略两两进行组合。</li>
 </ol>
-<p><img src="/image%2032.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2032.png" alt="image.png"></p>
 <h3 id="s-align"><a href="#s-align" class="headerlink" title="s_align"></a>s_align</h3><p>关键参数：</p>
 <ol>
 <li>modulus: Block的长度需要为多少字节的倍数</li>
 <li>pattern: 用于填充的字节</li>
 </ol>
 <p>根据参数可以看出s_align的作用为定义一个Block以modulus字节对齐。</p>
-<p><img src="/image%2033.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2033.png" alt="image.png"></p>
 <p>内部同样实现了 <code>__enter__</code> 和 <code>__exit__</code>  </p>
 <h2 id="Primitive操作"><a href="#Primitive操作" class="headerlink" title="Primitive操作"></a>Primitive操作</h2><h3 id="s-binary"><a href="#s-binary" class="headerlink" title="s_binary"></a>s_binary</h3><p>传入连续的16进制字符串，删除其中的分割符如空格、\t、\n 等，将其转换成字节并定义为Static原语。如”0xa1”变成b”\xa1”</p>
-<p><img src="/image%2034.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2034.png" alt="image.png"></p>
 <h3 id="调用对应的Primitive"><a href="#调用对应的Primitive" class="headerlink" title="调用对应的Primitive"></a>调用对应的Primitive</h3><p>下面的函数，直接使用对应的 Primitive（部分函数参数名 default_value 变为 value）:</p>
 <ol>
 <li>s_bit_field<ol>
@@ -332,7 +332,7 @@ plight3's blog
 </ol>
 <h3 id="s-lego"><a href="#s-lego" class="headerlink" title="s_lego"></a>s_lego</h3><p>此函数没有文档，暂不清楚如何使用，不建议使用</p>
 <h3 id="s-hexdump"><a href="#s-hexdump" class="headerlink" title="s_hexdump"></a>s_hexdump</h3><p>传入字符串，返回字符串的16进制表示</p>
-<p><img src="/image%2035.png" alt="image.png"></p>
+<p><img src="/%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0boofuzz%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8/image%2035.png" alt="image.png"></p>
 </div></article><aside class="post-widget"><h4>In this article</h4><nav class="post-toc-wrap" id="post-toc"><ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%8F%98%E5%BC%82-or-%E7%94%9F%E6%88%90"><span class="post-toc-number">1.</span> <span class="post-toc-text">变异 or 生成</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90"><span class="post-toc-number">2.</span> <span class="post-toc-text">基本组成</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">概述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">数据结构</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Primitive-%E7%9A%84%E7%94%9F%E6%88%90%E7%AD%96%E7%95%A5"><span class="post-toc-number">3.</span> <span class="post-toc-text">Primitive 的生成策略</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#BitField"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">BitField</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Byte-Word-Dword-Qword"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">Byte, Word, Dword, Qword</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Bytes"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">Bytes</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Delim"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">Delim</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Float"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">Float</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#FromFile"><span class="post-toc-number">3.6.</span> <span class="post-toc-text">FromFile</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Mirror"><span class="post-toc-number">3.7.</span> <span class="post-toc-text">Mirror</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#RandomData"><span class="post-toc-number">3.8.</span> <span class="post-toc-text">RandomData</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#String"><span class="post-toc-number">3.9.</span> <span class="post-toc-text">String</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Group-Simple"><span class="post-toc-number">3.10.</span> <span class="post-toc-text">Group &amp; Simple</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Group"><span class="post-toc-number">3.10.1.</span> <span class="post-toc-text">Group</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Simple"><span class="post-toc-number">3.10.2.</span> <span class="post-toc-text">Simple</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Static"><span class="post-toc-number">3.11.</span> <span class="post-toc-text">Static</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E7%BB%91%E5%AE%9ABlock"><span class="post-toc-number">3.12.</span> <span class="post-toc-text">绑定Block</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Checksum"><span class="post-toc-number">3.12.1.</span> <span class="post-toc-text">Checksum</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Repeat"><span class="post-toc-number">3.12.2.</span> <span class="post-toc-text">Repeat</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Size"><span class="post-toc-number">3.12.3.</span> <span class="post-toc-text">Size</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%87%BD%E6%95%B0%E4%BB%8B%E7%BB%8D"><span class="post-toc-number">4.</span> <span class="post-toc-text">函数介绍</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Request-%E6%93%8D%E4%BD%9C"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">Request 操作</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-initialize"><span class="post-toc-number">4.1.1.</span> <span class="post-toc-text">s_initialize</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-switch"><span class="post-toc-number">4.1.2.</span> <span class="post-toc-text">s_switch</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-get"><span class="post-toc-number">4.1.3.</span> <span class="post-toc-text">s_get</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-update"><span class="post-toc-number">4.1.4.</span> <span class="post-toc-text">s_update</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Block%E6%93%8D%E4%BD%9C"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">Block操作</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-block-start-s-block-end"><span class="post-toc-number">4.2.1.</span> <span class="post-toc-text">s_block_start &amp; s_block_end</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-block"><span class="post-toc-number">4.2.2.</span> <span class="post-toc-text">s_block</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-align"><span class="post-toc-number">4.2.3.</span> <span class="post-toc-text">s_align</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Primitive%E6%93%8D%E4%BD%9C"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">Primitive操作</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-binary"><span class="post-toc-number">4.3.1.</span> <span class="post-toc-text">s_binary</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E8%B0%83%E7%94%A8%E5%AF%B9%E5%BA%94%E7%9A%84Primitive"><span class="post-toc-number">4.3.2.</span> <span class="post-toc-text">调用对应的Primitive</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-lego"><span class="post-toc-number">4.3.3.</span> <span class="post-toc-text">s_lego</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#s-hexdump"><span class="post-toc-number">4.3.4.</span> <span class="post-toc-text">s_hexdump</span></a></li></ol></li></ol></li></ol></nav></aside></div><footer class="footer-nav"><div class="footer"><div class="back-top" id="back-top" title="Back to top"><i class="icon icon-chevron-bar-up"></i></div><div class="footer-content"><div><span id="busuanzi_container_site_pv"><span id="busuanzi_value_site_pv">?</span>
 views
 </span><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">?</span>

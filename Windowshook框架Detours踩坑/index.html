@@ -1,5 +1,5 @@
 <html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content="&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://xz.aliyun.com/news/16078&quot;&gt;原文首发于先知社区&lt;/a&gt;&lt;br&gt;相比Android 种类繁多的hook框架，Windows上的hook框架基本上只能搜到Detours。由于使用的人少，在使用过程中遇到一些坑也难以找到解决办法，只能去看源码。本文介绍我在使用Detours对&lt;strong&gt;Windows 32位程序&lt;/strong&gt;进行hook时遇见的一些坑，以及解决办法。&lt;/p&gt;"/><title>Windows hook框架Detours踩坑
+&lt;p&gt;&lt;a href=&quot;https://xz.aliyun.com/news/16078&quot;&gt;原文首发于阿里云先知社区&lt;/a&gt;&lt;br&gt;相比Android 种类繁多的hook框架，Windows上的hook框架基本上只能搜到Detours。由于使用的人少，在使用过程中遇到一些坑也难以找到解决办法，只能去看源码。本文介绍我在使用Detours对&lt;strong&gt;Windows 32位程序&lt;/strong&gt;进行hook时遇见的一些坑，以及解决办法。&lt;/p&gt;"/><title>Windows hook框架Detours踩坑
 -
 plight3's blog
 -
@@ -21,46 +21,46 @@ plight3's blog
 <a class="menubar-link" href="/categories/Misc/">Misc</a></li><li class="menubar-item" data-border="data-border"></li><li class="menubar-item"><i class="icon icon-archive"></i>
 <a class="menubar-link" href="/archives">Archives</a></li><li class="menubar-item"><i class="icon icon-tags"></i>
 <a class="menubar-link" href="/tags">Tags</a></li></ul><div class="menu-search-box search-button"><div>Search</div>
-<i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/Windows%20hook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91%20155d9913334a80bfbbffdc760a8c5b13/">Windows hook框架Detours踩坑</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2024-12-08 22:48:00" datetime="2024-12-08T22:48:00.000Z">2024-12-08</time></div>|
+<i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/">Windows hook框架Detours踩坑</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2024-12-08 22:48:00" datetime="2024-12-08T22:48:00.000Z">2024-12-08</time></div>|
 <div class="post-tag"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hook/" rel="tag">hook</a></li></ul></div>
-<div class="post-visit"><span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv"></span>hits</span></div></div><div class="post-info"><div class="post-word-count">This article contains 3,261 words.</div>
+<div class="post-visit"><span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv"></span>hits</span></div></div><div class="post-info"><div class="post-word-count">This article contains 3,264 words.</div>
 </div><div class="article-entry" itemprop="articleBody"><hr>
-<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/16078">原文首发于先知社区</a><br>相比Android 种类繁多的hook框架，Windows上的hook框架基本上只能搜到Detours。由于使用的人少，在使用过程中遇到一些坑也难以找到解决办法，只能去看源码。本文介绍我在使用Detours对<strong>Windows 32位程序</strong>进行hook时遇见的一些坑，以及解决办法。</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/16078">原文首发于阿里云先知社区</a><br>相比Android 种类繁多的hook框架，Windows上的hook框架基本上只能搜到Detours。由于使用的人少，在使用过程中遇到一些坑也难以找到解决办法，只能去看源码。本文介绍我在使用Detours对<strong>Windows 32位程序</strong>进行hook时遇见的一些坑，以及解决办法。</p>
 <span id="more"></span>
 
 
 
 <h1 id="下载与编译"><a href="#下载与编译" class="headerlink" title="下载与编译"></a>下载与编译</h1><p>源码在官方github: <a target="_blank" rel="noopener" href="https://github.com/microsoft/Detours/releases/tag/v4.0.1">https://github.com/microsoft/Detours/releases/tag/v4.0.1</a> 进行下载</p>
-<p><img src="/image.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image.png" alt="image.png"></p>
 <p>下载之后进行解压，之后打开VS的Native Tools Command Prompt 命令行（编译64位用x64开头的命令行，编译x86用x86开头的命令行），cd到Detours的src目录下执行nmake命令进行编译</p>
-<p><img src="/image%201.png" alt="image.png"></p>
-<p><img src="/image%202.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%201.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%202.png" alt="image.png"></p>
 <p>nmake执行之后，会在src目录的上一层出现lib.X86目录（如果是64位则为lib.X64）,目录中的detours.lib 文件即为编译好的Detours静态库。我们可以在自己的工程中导入Detours静态库和头文件使用它提供的hook功能。</p>
-<p><img src="/image%203.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%203.png" alt="image.png"></p>
 <p>Detours头文件在include目录下，名称为detours.h</p>
-<p><img src="/image%204.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%204.png" alt="image.png"></p>
 <h1 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h1><p>在项目中使用Detours进行hook需要进行配置，流程如下：</p>
 <ul>
 <li>将detours.lib和detours.h拷贝到项目目录下</li>
 <li>右键解决方案资源管理器的头文件处→添加→现有项  选择detours.h</li>
 </ul>
-<p><img src="/image%205.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%205.png" alt="image.png"></p>
 <ul>
 <li>右键解决方案资源管理器的项目名处，选择属性，打开项目配置页面</li>
 </ul>
-<p><img src="/image%206.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%206.png" alt="image.png"></p>
 <ul>
 <li>在项目配置页面注意先选择平台是32位还是64位，Debug还是Release，每种编译目标的配置文件不同。目标程序为32位时需要使用32位的dll，目标程序为64位时需要使用64位的dll。在配置属性→VC++目录→库目录 中添加detours.lib所在的目录。</li>
 </ul>
-<p><img src="/image%207.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%207.png" alt="image.png"></p>
 <ul>
 <li>取消SDL检查，否则scanf、sprintf这类的函数会报错，要求替换成scanf_s、sprintf_s。</li>
 </ul>
-<p><img src="/image%208.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%208.png" alt="image.png"></p>
 <ul>
 <li>关闭符合模式，否则一些指针强转会报错。 如DetourAttach 函数报错：&amp;要求左值</li>
 </ul>
-<p><img src="/image%209.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%209.png" alt="image.png"></p>
 <ul>
 <li>在使用Detours的项目中，需要导入头文件和静态库</li>
 </ul>
@@ -75,7 +75,7 @@ plight3's blog
 </ul>
 </li>
 </ul>
-<p><img src="/image%2010.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2010.png" alt="image.png"></p>
 <ul>
 <li>Detours 常用函数组合为：<ol>
 <li>DetourTransactionBegin();</li>
@@ -97,13 +97,13 @@ plight3's blog
 <ul>
 <li>Debug 模式编译，puts函数来自ucrtbased.dll</li>
 </ul>
-<p><img src="/image%2011.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2011.png" alt="image.png"></p>
 <ul>
 <li>Release 模式编译，puts函数来着api-ms-win-crt-stdio-11-1-0.dll，实际上使用的是ucrtbase.dll</li>
 </ul>
-<p><img src="/image%2012.png" alt="image.png"></p>
-<p><img src="/image%2013.png" alt="image.png"></p>
-<p><img src="/image%2014.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2012.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2013.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2014.png" alt="image.png"></p>
 <p>对于库函数或系统函数，建议使用DetourFindFunction在目标程序加载的动态链接库里获取函数指针</p>
 <h2 id="非导出函数"><a href="#非导出函数" class="headerlink" title="非导出函数"></a>非导出函数</h2><p>DetourFindFunction函数只能查找动态链接库或程序中的导出函数，当要hook的目标函数不是导出函数时应该怎么办？</p>
 <p>可以使用模块加载基址+函数偏移的方式来得到目标函数的函数指针，示例代码如下：</p>
@@ -112,8 +112,8 @@ plight3's blog
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;windows.h&gt;</span></span><br><span class="line"></span><br><span class="line">_declspec(noinline) <span class="built_in">int</span> add_func(<span class="built_in">int</span> a, <span class="built_in">int</span> b)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">int</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    HMODULE h = LoadLibraryA(<span class="string">&quot;Dll1.dll&quot;</span>);</span><br><span class="line">    <span class="built_in">int</span> a = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">int</span> b = <span class="number">0</span>;</span><br><span class="line">    scanf(<span class="string">&quot;%d%d&quot;</span>, &amp;a, &amp;b);</span><br><span class="line">    printf(<span class="string">&quot;%d+%d=%d\n&quot;</span>, a, b, add_func(a, b));</span><br><span class="line">    scanf(<span class="string">&quot;%d%d&quot;</span>, &amp;a, &amp;b);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>hook非导出函数首先需要找到目标函数在目标程序中的偏移，可以在IDA中查看，用函数地址减去基址即为函数偏移：0x401100-0x400000&#x3D;0x1100 。  下图中.text段从0x401000开始，但是基址为0x400000，前0x1000是PE文件头</p>
-<p><img src="/image%2015.png" alt="image.png"></p>
-<p><img src="/image%2016.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2015.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2016.png" alt="image.png"></p>
 <p>hook代码如下，通过GetModuleHandleA 函数获取目标程序加载的基址，然后加上目标函数的偏移，得到目标函数的地址，转换成函数指针。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">// dllmain.cpp : 定义 DLL 应用程序的入口点。</span><br><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &quot;detours.h&quot;    // 导入Detours头文件</span></span><br><span class="line"><span class="comment">#pragma comment(lib, &quot;detours.lib&quot;)  //导入Detours</span></span><br><span class="line"></span><br><span class="line">PVOID g_pOriginAdd = NULL;</span><br><span class="line"></span><br><span class="line"><span class="built_in">int</span> MyFunc(<span class="built_in">int</span> a, <span class="built_in">int</span> b) &#123;</span><br><span class="line">		((<span class="built_in">int</span>(*)(<span class="built_in">int</span>, <span class="built_in">int</span>))g_pOriginAdd)(a, b); //调用原函数</span><br><span class="line">    <span class="keyword">return</span> a-b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void hook_add()</span><br><span class="line">&#123;</span><br><span class="line">    DetourTransactionBegin();</span><br><span class="line">    DetourUpdateThread(GetCurrentThread());</span><br><span class="line">    DWORD addOffset = <span class="number">0x1100</span>;</span><br><span class="line">    DWORD baseAddr = (DWORD)GetModuleHandleA(<span class="string">&quot;detours_practise.exe&quot;</span>);</span><br><span class="line">    g_pOriginAdd = (PVOID)(addOffset + baseAddr);</span><br><span class="line">    DetourAttach(&amp;(PVOID)g_pOriginAdd, MyFunc);</span><br><span class="line">    DetourTransactionCommit();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">BOOL APIENTRY DllMain( HMODULE hModule,</span><br><span class="line">                       DWORD  ul_reason_for_call,</span><br><span class="line">                       LPVOID lpReserved</span><br><span class="line">                     )</span><br><span class="line">&#123;</span><br><span class="line">    switch (ul_reason_for_call)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">case</span> DLL_PROCESS_ATTACH:</span><br><span class="line">        hook_add();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> DLL_THREAD_ATTACH:</span><br><span class="line">    <span class="keyword">case</span> DLL_THREAD_DETACH:</span><br><span class="line">    <span class="keyword">case</span> DLL_PROCESS_DETACH:</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -126,26 +126,26 @@ plight3's blog
 <li>修改目标函数的前5个字节，以跳转到hook后的函数中。如果第1步计算出来的需要修改的字节数大于5，大于5的部分填上0xCC</li>
 <li>会将Trampoline函数的地址addr3 给DetourAttach函数的第一个参数（所以此参数是一个二级指针），<strong>因此可以在新函数中通过Trampoline调用原函数</strong></li>
 </ol>
-<p><img src="/image%2017.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2017.png" alt="image.png"></p>
 <h3 id="cdecl-和-stdcall"><a href="#cdecl-和-stdcall" class="headerlink" title="__cdecl 和 __stdcall"></a>__cdecl 和 __stdcall</h3><ul>
 <li>当函数不显示指定调用约定时，使用的就是__cdecl，宏为WINAPIV。此调用约定在32位程序中使用栈传参，函数调用结束之后由调用方清理栈中的参数。下图中的add_func有两个参数，在调用它时，push 了两个参数到栈中，调用结束后需要使用add esp,8 将栈还原</li>
 </ul>
-<p><img src="/image%2018.png" alt="image.png"></p>
-<p><img src="/image%2019.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2018.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2019.png" alt="image.png"></p>
 <ul>
 <li>__stdcall 宏为WINAPI。此调用约定在32位程序中使用栈传参，函数调用结束之后由被调用方清理栈中的参数。下图中的add_func有两个参数，在调用它时，push 了两个参数到栈中，调用结束后，调用方没有使用 add esp,8将栈还原。而是被调用方，add_func自己将栈还原</li>
 </ul>
-<p><img src="/image%2020.png" alt="image.png"></p>
-<p><img src="/image%2021.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2020.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2021.png" alt="image.png"></p>
 <p>如果目标函数使用__cdecl，而替换后的新函数使用__stdcall 时。调用目标函数时调用方会清理堆栈，新函数会自己清理堆栈，等于清理了两次堆栈，栈不平衡会导致目标程序崩溃。反之亦然。参数的数量和类型如果不一致，会导致传参使用的堆栈大小和清理堆栈的大小不一致，导致程序崩溃。</p>
 <h3 id="fastcall-和-usercall"><a href="#fastcall-和-usercall" class="headerlink" title="__fastcall 和 __usercall"></a>__fastcall 和 __usercall</h3><p><strong>fastcall调用约定对于函数的前两个参数使用寄存器ecx和edx进行传参，其余的参数使用栈传参，由被调用方清理堆栈。如果目标函数使用__fastcall，而替换后的新函数不使用__fastcall，当目标函数被调用时会使用寄存器传参，而新函数依然会从栈中取参数，导致参数和预期不符。</strong></p>
-<p><img src="/image%2022.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2022.png" alt="image.png"></p>
 <p>编译器优化会将函数调用约定变为__usercall，这种调用约定传参与fastcall一样，但是无论是调用方还是被调用方都没有清理堆栈，程序可能会崩溃。可以禁用优化，不使用这种调用约定</p>
-<p><img src="/image%2023.png" alt="image.png"></p>
-<p><img src="/image%2024.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2023.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2024.png" alt="image.png"></p>
 <h3 id="thiscall"><a href="#thiscall" class="headerlink" title="__thiscall"></a>__thiscall</h3><p>__thiscall 用于类中的函数调用，this指针通过ecx传递，其余参数通过栈传递，由被调用方清理堆栈。</p>
-<p><img src="/image%2025.png" alt="image.png"></p>
-<p><img src="/image%2026.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2025.png" alt="image.png"></p>
+<p><img src="/Windowshook%E6%A1%86%E6%9E%B6Detours%E8%B8%A9%E5%9D%91/image%2026.png" alt="image.png"></p>
 <p>__thiscall只能用于类中的函数，而我们替换目标函数的新函数是类外的函数，不能使用此调用约定，无法保持目标函数和替换的新函数调用约定一致，那么应该如何hook一个类函数？</p>
 <p>示例目标程序如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;windows.h&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span></span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">    <span class="built_in">int</span> mValue;</span><br><span class="line">public:</span><br><span class="line">    Test(<span class="built_in">int</span> value) &#123;</span><br><span class="line">        mValue = value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">int</span> addFunc(<span class="built_in">int</span> a, <span class="built_in">int</span> b)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> a + b + this-&gt;mValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">int</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    HMODULE h = LoadLibraryA(<span class="string">&quot;Dll1.dll&quot;</span>);</span><br><span class="line">    <span class="built_in">int</span> a = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">int</span> b = <span class="number">0</span>;</span><br><span class="line">    scanf(<span class="string">&quot;%d%d&quot;</span>, &amp;a, &amp;b);</span><br><span class="line">    Test test(a);</span><br><span class="line">    printf(<span class="string">&quot;%d+%d=%d\n&quot;</span>, a, b, test.addFunc(a, b));</span><br><span class="line">    scanf(<span class="string">&quot;%d%d&quot;</span>, &amp;a, &amp;b);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
