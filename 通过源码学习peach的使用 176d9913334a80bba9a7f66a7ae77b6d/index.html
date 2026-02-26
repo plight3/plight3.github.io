@@ -1,0 +1,332 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content="&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://xz.aliyun.com/news/18139&quot;&gt;原文首发于阿里云先知社区&lt;/a&gt;&lt;br&gt;本文通过分析和调试源码来学习 peach 的使用。&lt;/p&gt;"/><title>通过源码学习peach的使用
+-
+plight3's blog
+-
+
+</title><link rel="icon" href="/img/favicon.ico"/>
+<link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/helpers.css">
+
+<script src="/js/clipboard/clipboard.min.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+<script async="async" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 8.1.1"></head><body><div class="loading-wrapper" data-loading="data-loading"><div class="loading"><span></span><span></span><span></span></div></div><div class="page" data-filter="data-filter"><div class="head" data-show="data-show"><header class="head-header"><div class="head-author"><a class="head-author-link" href="/">plight3's blog</a></div><div class="head-right"><button class="bar-wrap" id="bar-wrap-toggle" title="menu button"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button><div class="head-item"><a class="search-button head-item-link"><span>Search</span>
+<i class="icon icon-search"></i></a></div><div class="head-item"></div></div></header>
+<div class="menubar-head" id="menubar"><ul class="menubar-ul"><li class="menubar-item"><i class="icon icon-chevron-right"></i>
+<a class="menubar-link" href="/categories/Security-Learning/">Security-Learning</a></li><li class="menubar-item"><i class="icon icon-chevron-right"></i>
+<a class="menubar-link" href="/categories/Misc/">Misc</a></li><li class="menubar-item" data-border="data-border"></li><li class="menubar-item"><i class="icon icon-archive"></i>
+<a class="menubar-link" href="/archives">Archives</a></li><li class="menubar-item"><i class="icon icon-tags"></i>
+<a class="menubar-link" href="/tags">Tags</a></li></ul><div class="menu-search-box search-button"><div>Search</div>
+<i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/%E9%80%9A%E8%BF%87%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0peach%E7%9A%84%E4%BD%BF%E7%94%A8%20176d9913334a80bba9a7f66a7ae77b6d/">通过源码学习peach的使用</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2025-05-31 02:30:00" datetime="2025-05-31T02:30:00.000Z">2025-05-31</time></div>|
+<div class="post-tag"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/graybox-fuzz/" rel="tag">graybox-fuzz</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/peach/" rel="tag">peach</a></li></ul></div>
+<div class="post-visit"><span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv"></span>hits</span></div></div><div class="post-info"><div class="post-word-count">This article contains 5,287 words.</div>
+</div><div class="article-entry" itemprop="articleBody"><hr>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/18139">原文首发于阿里云先知社区</a><br>本文通过分析和调试源码来学习 peach 的使用。</p>
+<span id="more"></span>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>peach 网上能找到的版本为peach2，peach3，peach4。</p>
+<h2 id="peach2"><a href="#peach2" class="headerlink" title="peach2"></a>peach2</h2><p>peach2 使用 python2 编写，下载地址为：<a target="_blank" rel="noopener" href="https://github.com/MozillaSecurity/peach">https://github.com/MozillaSecurity/peach</a> </p>
+<p>python 虽然容易上手和理解，但是 python2 的环境比较难搭建。即使搭建成功之后，由于 peach2和 peach3 之后版本使用的命令参数差异较大，网上和官方文档中也找不到使用说明， 很难运行起来。</p>
+<h2 id="peach3-和-peach4"><a href="#peach3-和-peach4" class="headerlink" title="peach3 和 peach4"></a>peach3 和 peach4</h2><p>peach3 和 peach4 使用 c# 编写</p>
+<p>peach3 下载地址为：<a target="_blank" rel="noopener" href="https://gitlab.com/peachtech/peach-fuzzer-community">https://gitlab.com/peachtech/peach-fuzzer-community</a></p>
+<p>peach4 下载地址为：<a target="_blank" rel="noopener" href="https://gitlab.com/gitlab-org/security-products/protocol-fuzzer-ce">https://gitlab.com/gitlab-org/security-products/protocol-fuzzer-ce</a></p>
+<p>peach3 编译环境搭建过程中会提示 CL.exe 版本不支持，暂不知道如何解决</p>
+<p>peach4 编译环境搭建网上有相关的资料可以参考，虽然也有一些坑，但最终还是能解决并成功搭建起来编译环境。本文主要分析 peach4 的源码。</p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>环境搭建参考：<a target="_blank" rel="noopener" href="https://github.com/sfncat/peach/blob/main/doc/%E7%BC%96%E8%AF%91PeachPro%204.0(protocol-fuzzer-ce)%20for%20windows.md">https://github.com/sfncat/peach/blob/main/doc/编译PeachPro 4.0(protocol-fuzzer-ce) for windows.md</a></p>
+<p>按照教程安装遇到了一些问题，解决方法如下：</p>
+<ol>
+<li>typescript 安装：  typescript 需要安装 1.8 以下的版本，安装命令为 <code>npm install -g typescript@1.8</code></li>
+<li>Ruby2.7 安装：安装文章中提供的 Ruby2.7 时，msys2 and mingw development toolchain 对应版本的文件无法下载。可以通过安装 Ruby3.4 来解决此问题，但环境变量中指向 Ruby3.4&#x2F;bin 目录应修改为 Ruby2.7&#x2F;bin 目录</li>
+<li>choco安装Java,xsltprocs,git：需要使用管理员权限打开命令行</li>
+<li>doxygen 安装：文章提供的链接无法访问，去官网安装最新的版本就行</li>
+<li>visual C++ Redistributable for Visual Studio 2012 Update 4 下载链接： <a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/download/details.aspx?id=30679">https://www.microsoft.com/en-us/download/details.aspx?id=30679</a></li>
+<li><code>.\paket.exe restore --verbose</code>  执行不成功可以考虑用手机热点</li>
+</ol>
+<h2 id="IDE-使用"><a href="#IDE-使用" class="headerlink" title="IDE 使用"></a>IDE 使用</h2><p>参考文章 <a target="_blank" rel="noopener" href="https://cartermgj.github.io/2018/02/02/peach-source/">https://cartermgj.github.io/2018/02/02/peach-source/</a>  ，使用命令 <code>waf.bat msvs2017</code> 生成 sln 文件。</p>
+<p>按照文章中所描述的，将启动项目设为 peach</p>
+<p><img src="/image.png" alt="image.png"></p>
+<p><img src="/image%201.png" alt="image.png"></p>
+<p>为 peach 项目的命令行参数指定 pit 文件，即可调试运行</p>
+<p><img src="/image%202.png" alt="image.png"></p>
+<h1 id="基本元素"><a href="#基本元素" class="headerlink" title="基本元素"></a>基本元素</h1><p>peach 运行需要指定一个 xml 格式的 pit 文件，此文件主要描述了 fuzz 过程中使用的协议格式、状态模型、测试目标。下面是一个最简单的 pit 文件，只包含必须要有的元素：</p>
+<ol>
+<li>DataModel: 用于定义协议的格式</li>
+<li>StateModel：用于定义协议的状态机，一般情况下只定义一个 State 和 一个 Action 就行</li>
+<li>Test: 指定 peach 运行时使用的配置，如状态机、变异策略、日志文件路径、目标地址</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Peach</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://peachfuzzer.com/2012/Peach&quot;</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://peachfuzzer.com/2012/Peach ../peach.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">DataModel</span> <span class="attr">name</span>=<span class="string">&quot;datamodel1&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">Block</span> <span class="attr">name</span>=<span class="string">&quot;block1&quot;</span>&gt;</span></span><br><span class="line">		  <span class="tag">&lt;<span class="name">Number</span> <span class="attr">name</span>=<span class="string">&quot;field1&quot;</span> <span class="attr">size</span>=<span class="string">&quot;8&quot;</span> <span class="attr">value</span>=<span class="string">&quot;01&quot;</span> <span class="attr">valueType</span>=<span class="string">&quot;hex&quot;</span> <span class="attr">endian</span>=<span class="string">&quot;network&quot;</span> <span class="attr">mutable</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">		  <span class="tag">&lt;<span class="name">Number</span> <span class="attr">name</span>=<span class="string">&quot;field2&quot;</span> <span class="attr">size</span>=<span class="string">&quot;16&quot;</span> <span class="attr">value</span>=<span class="string">&quot;0100&quot;</span> <span class="attr">valueType</span>=<span class="string">&quot;hex&quot;</span> <span class="attr">endian</span>=<span class="string">&quot;network&quot;</span> <span class="attr">mutable</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br><span class="line">		  <span class="tag">&lt;<span class="name">Number</span> <span class="attr">name</span>=<span class="string">&quot;field3&quot;</span> <span class="attr">size</span>=<span class="string">&quot;16&quot;</span> <span class="attr">value</span>=<span class="string">&quot;0001&quot;</span> <span class="attr">valueType</span>=<span class="string">&quot;hex&quot;</span> <span class="attr">endian</span>=<span class="string">&quot;network&quot;</span> <span class="attr">mutable</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">Block</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">DataModel</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">StateModel</span> <span class="attr">name</span>=<span class="string">&quot;StateModel1&quot;</span> <span class="attr">initialState</span>=<span class="string">&quot;InitialState&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">State</span> <span class="attr">name</span>=<span class="string">&quot;InitialState&quot;</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">Action</span> <span class="attr">type</span>=<span class="string">&quot;output&quot;</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">DataModel</span> <span class="attr">ref</span>=<span class="string">&quot;datamodel1&quot;</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">Action</span>&gt;</span> </span><br><span class="line">		<span class="tag">&lt;/<span class="name">State</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">StateModel</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">Test</span> <span class="attr">name</span>=<span class="string">&quot;Default&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">StateModel</span> <span class="attr">ref</span>=<span class="string">&quot;StateModel1&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Strategy</span> <span class="attr">class</span>=<span class="string">&quot;Sequential&quot;</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">Logger</span> <span class="attr">class</span>=<span class="string">&quot;File&quot;</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">Param</span> <span class="attr">name</span>=<span class="string">&quot;Path&quot;</span> <span class="attr">value</span>=<span class="string">&quot;c:\log1&quot;</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">Logger</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">Publisher</span> <span class="attr">class</span>=<span class="string">&quot;tcp.Tcp&quot;</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">Param</span> <span class="attr">name</span>=<span class="string">&quot;Host&quot;</span> <span class="attr">value</span>=<span class="string">&quot;127.0.0.1&quot;</span>/&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">Param</span> <span class="attr">name</span>=<span class="string">&quot;Port&quot;</span> <span class="attr">value</span>=<span class="string">&quot;502&quot;</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">Publisher</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">Test</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">Peach</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="DataModel"><a href="#DataModel" class="headerlink" title="DataModel"></a>DataModel</h2><p>协议格式定义在 DataModel 元素下，通用参数有：</p>
+<ol>
+<li>name: 标识一个元素，便于被其它元素引用</li>
+<li>mutable: 此元素是否变异，默认为 true。除了类型相关的元素之外，<strong>DataModel、Block 这种元素也会变异，如增加、删除、交换这些元素</strong></li>
+<li>occur 相关：用于指导变异，这些参数不为默认时，元素在变异时会增加一些复制自身的操作<ol>
+<li>minOccurs: 最少出现次数，默认 1</li>
+<li>maxOccurs: 最多出现次数，默认 1</li>
+<li>occurs: 实际出现次数，默认 1</li>
+</ol>
+</li>
+</ol>
+<p>DataModel 本身也有一些参数：</p>
+<ol>
+<li>ref: 可以引用其它 DataModel，引用的数据会在当前 DataModel 的前面</li>
+</ol>
+<h3 id="Block"><a href="#Block" class="headerlink" title="Block"></a>Block</h3><p>用于对一些元素统一进行操作，如计算数据包的总长度，关键参数如下：</p>
+<ol>
+<li>ref: 引用其它 Block 或 DataModel</li>
+</ol>
+<h3 id="Number"><a href="#Number" class="headerlink" title="Number"></a>Number</h3><p>定义一个整数（字节码数据，而不是字符串，1 是字节码，”1” 是字符串），关键参数如下：</p>
+<ol>
+<li>size: bit 为单位，最大为 64</li>
+<li>signed: 是否有符号，默认 false</li>
+<li>endian: 大小端，默认小端（big 和 network 都表示大端）</li>
+<li>value: 默认值</li>
+<li>valueType: value 的数据格式，string 或 hex，默认 string，一般用 hex</li>
+</ol>
+<h3 id="Double"><a href="#Double" class="headerlink" title="Double"></a>Double</h3><p>定义一个浮点数，关键参数如下：</p>
+<ol>
+<li>size: bit 为单位，只能为 32 或 64</li>
+<li>signed: 是否有符号，默认 false</li>
+<li>endian: 大小端，默认小端（big 和 network 都表示大端）</li>
+<li>value: 默认值，可以直接写浮点数 ”0.1” 或使用科学计数法 “1e-1”</li>
+<li>valueType: value 的数据格式，string 或 hex，默认 string</li>
+</ol>
+<h3 id="Blob"><a href="#Blob" class="headerlink" title="Blob"></a>Blob</h3><p>定义一个数据块，一般用于定义协议的数据部分，关键参数如下：</p>
+<ol>
+<li>length: 长度</li>
+<li>lengthType: 长度类型，bytes 或 bits，默认 bytes</li>
+<li>value: 默认值</li>
+<li>valueType: value 的数据格式，string 或 hex，默认 string</li>
+<li>token: 是否为 token，默认 false（网上说此字段为 true 表示不变异，经过测试此字段没有效果，还是建议使用 mutable）</li>
+</ol>
+<h3 id="Choice"><a href="#Choice" class="headerlink" title="Choice"></a>Choice</h3><p>下面包含多个子元素，当 Choice 的变异策略生效时会从子元素中选择一个，否则使用第一个子元素。子元素的 mutable 建议设置为 false，如果都设置为 true，只有第一个子元素的变异策略会生效。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Choice</span> <span class="attr">name</span>=<span class="string">&quot;ChoiceBlock&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">Block</span> <span class="attr">name</span>=<span class="string">&quot;Type1&quot;</span>&gt;</span></span><br><span class="line">		<span class="comment">&lt;!-- ... --&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">Block</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Number</span> <span class="attr">name</span>=<span class="string">&quot;Type2&quot;</span> <span class="attr">size</span>=<span class="string">&quot;8&quot;</span> <span class="attr">value</span>=<span class="string">&quot;01&quot;</span> <span class="attr">valueType</span>=<span class="string">&quot;hex&quot;</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">Blob</span> <span class="attr">name</span>=<span class="string">&quot;Type3&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Choice</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Flag"><a href="#Flag" class="headerlink" title="Flag"></a>Flag</h3><p>一个 Flags 下面包含多个 Flag，Flag 本质上还是 Number，通过 Flags 包裹起来可以多一些数组相关的变异策略，如删除某个 Flag，交换 Flag 位置。Flags关键参数为：</p>
+<ol>
+<li>size：元素占几个 bit（Flags 中没有给值的 bit 处用 0 填充）</li>
+<li>position: 元素在 Flags 中的位置（以 bit 为单位），position&#x3D;10 size&#x3D;2 表示 Flags 中第 11 -12 个 bit</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Flags</span> <span class="attr">name</span>=<span class="string">&quot;options&quot;</span> <span class="attr">size</span>=<span class="string">&quot;16&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Flag</span> <span class="attr">name</span>=<span class="string">&quot;compression&quot;</span> <span class="attr">position</span>=<span class="string">&quot;0&quot;</span> <span class="attr">size</span>=<span class="string">&quot;1&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Flag</span> <span class="attr">name</span>=<span class="string">&quot;compressionType&quot;</span> <span class="attr">position</span>=<span class="string">&quot;1&quot;</span> <span class="attr">size</span>=<span class="string">&quot;3&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Flag</span> <span class="attr">name</span>=<span class="string">&quot;opcode&quot;</span> <span class="attr">position</span>=<span class="string">&quot;10&quot;</span> <span class="attr">size</span>=<span class="string">&quot;2&quot;</span> <span class="attr">value</span>=<span class="string">&quot;5&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Flags</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Padding"><a href="#Padding" class="headerlink" title="Padding"></a>Padding</h3><p>用于填充数据包，让数据包的长度对齐到 n bit 的倍数，关键参数如下：</p>
+<ol>
+<li>alignment: 对齐到多少 <strong>bit（不是 byte）</strong>，默认 8。想以 4 字节对齐，应设置为 32</li>
+<li>alignedTo: 指定哪个元素需要对齐，不指定则对齐父元素</li>
+<li>minSize: 最少填充的 bit，默认 0。满足最少填充数的前提下，再满足对齐要求</li>
+</ol>
+<p><img src="/image%203.png" alt="image.png"></p>
+<h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p>定义一个字符串，关键参数如下：</p>
+<ol>
+<li>length: 长度。nullTerminated 为 true 时可以不指定长度。只有当 length 不指定、nullTerminated 为 true，或者 lengthType 为 chars、length 指定时字符串长度才是确定的。因为有些编码中一个字符可能占多个 bytes，如果不能表示完整的字符会报错</li>
+<li>lengthType: 长度类型，bytes、bits、chars，默认 bytes</li>
+<li>nullTerminated: 字符串是否以 00 结尾，默认 false</li>
+<li>padCharacter: 当字符串长度不够 length 时用于填充的字符，默认空</li>
+<li>type: 编码类型，默认 utf8</li>
+<li>value: 默认值，默认空</li>
+<li>valueType: value 的数据格式，默认 string</li>
+</ol>
+<p><img src="/image%204.png" alt="image.png"></p>
+<p><img src="/image%205.png" alt="image.png"></p>
+<h2 id="Relation"><a href="#Relation" class="headerlink" title="Relation"></a>Relation</h2><p>Relation 标签用于统计其它字段的内容信息，如计算其它字段的长度、变异时的重复次数、数据包中相对于某个字段的偏移。</p>
+<h3 id="长度"><a href="#长度" class="headerlink" title="长度"></a>长度</h3><p>Relation的type为size时可以计算指定元素的长度（字节为单位），语法为<Relation type=”size” of=”需要计算长度的元素名（可以指定单个元素或Block）”></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;DataModel name=<span class="string">&quot;Header&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">	&lt;Block name=<span class="string">&quot;Header&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">	  &lt;Number name=<span class="string">&quot;len&quot;</span> size=<span class="string">&quot;16&quot;</span> value=<span class="string">&quot;0006&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">		&lt;Relation <span class="built_in">type</span>=<span class="string">&quot;size&quot;</span> of=<span class="string">&quot;PDU&quot;</span> /&gt;</span><br><span class="line">	  &lt;/Number&gt;</span><br><span class="line">	  &lt;Block name=<span class="string">&quot;PDU&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">		  &lt;Number name=<span class="string">&quot;func_code&quot;</span> size=<span class="string">&quot;16&quot;</span> value=<span class="string">&quot;00 01&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;false&quot;</span> /&gt;</span><br><span class="line">		  &lt;Number name=<span class="string">&quot;start_addr&quot;</span> size=<span class="string">&quot;16&quot;</span> value=<span class="string">&quot;3006&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;false&quot;</span> /&gt;</span><br><span class="line">		  &lt;Number name=<span class="string">&quot;qty&quot;</span> size=<span class="string">&quot;16&quot;</span> value=<span class="string">&quot;00 01&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;true&quot;</span> /&gt;</span><br><span class="line">		&lt;/Block&gt;</span><br><span class="line">	&lt;/Block&gt;</span><br><span class="line">&lt;/DataModel&gt;</span><br></pre></td></tr></table></figure>
+
+<p>一些情况下，长度字段可能表示为实际长度乘2或除2，如一些协议中长度字段表示payload占多少个word（2字节），这时需要将payload的实际长度除2。peach中可以使用 expressionSet和expressionGet实现这样的功能。设置方式如下：</p>
+<ul>
+<li>expressionSet 和 expressionGet 必须互为逆运算，若 expressionSet&#x3D;”size*2”，expressionGet需要为”size&#x2F;2”。这里size表示Relation type&#x3D;”size” 绑定的元素实际长度。</li>
+<li>expressionSet 表示对数据包中字段的操作，上述表示payload占多少个word的功能实现如下</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Number name=<span class="string">&quot;len&quot;</span> size=<span class="string">&quot;16&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">	&lt;Relation <span class="built_in">type</span>=<span class="string">&quot;size&quot;</span> of=<span class="string">&quot;PDU&quot;</span> expressionSet=<span class="string">&quot;size/2&quot;</span> expressionGet=<span class="string">&quot;size*2&quot;</span>/&gt;</span><br><span class="line">&lt;/Number&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="重复次数"><a href="#重复次数" class="headerlink" title="重复次数"></a>重复次数</h3><p>Relation的type为count时可以计算指定元素变异时的重复次数（元素定义时可以指定maxOccurs和minOccurs），语法为<Relation type=”count” of=”需要计算重复次数的元素名（可以指定单个元素或Block）”></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;Number size=<span class="string">&quot;32&quot;</span> signed=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">  &lt;Relation <span class="built_in">type</span>=<span class="string">&quot;count&quot;</span> of=<span class="string">&quot;Strings&quot;</span> /&gt;</span><br><span class="line">&lt;/Number&gt;</span><br><span class="line">&lt;String name=<span class="string">&quot;Strings&quot;</span> nullTerminated=<span class="string">&quot;true&quot;</span> maxOccurs=<span class="string">&quot;1024&quot;</span> /&gt;</span><br></pre></td></tr></table></figure>
+
+<p>同样可以使用expressionSet和expressionGet，里面用于计算的变量需要修改为 count。</p>
+<h3 id="偏移"><a href="#偏移" class="headerlink" title="偏移"></a>偏移</h3><p>Relation的type为offset时可以计算指定元素的偏移：</p>
+<ol>
+<li>指定元素相对于数据包头部的偏移，<Relation type="offset" of="Strings" /></li>
+<li>指定元素相对于Relation所在元素的偏移，<Relation type="offset" of="Strings" relative=”true”/> ，包含Relation所在元素的size</li>
+<li>指定元素相对于指定的任意元素的偏移，<Relation type="offset" of="Strings" relative=”true” relativeTo=”unit_id”/></li>
+</ol>
+<p>同样可以使用expressionSet和expressionGet，里面用于计算的变量需要修改为 offset。</p>
+<h2 id="Fixup"><a href="#Fixup" class="headerlink" title="Fixup"></a>Fixup</h2><p>Fixup 标签的主要功能有：校验和计算、hash计算、序列号生成、值拷贝。可以直接参考官方文档：<a target="_blank" rel="noopener" href="https://peachtech.gitlab.io/peach-fuzzer-community/v3/Fixup.html">https://peachtech.gitlab.io/peach-fuzzer-community/v3/Fixup.html</a></p>
+<h3 id="校验和计算"><a href="#校验和计算" class="headerlink" title="校验和计算"></a>校验和计算</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&lt;Number size=<span class="string">&quot;32&quot;</span>&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;Crc32DualFixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref1&quot;</span> value=<span class="string">&quot;Header&quot;</span> /&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref2&quot;</span> value=<span class="string">&quot;Data&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Number&gt;</span><br><span class="line"></span><br><span class="line">&lt;Number size=<span class="string">&quot;32&quot;</span>&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;Crc32Fixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;Data&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Number&gt;</span><br><span class="line"></span><br><span class="line">&lt;Number size=<span class="string">&quot;32&quot;</span>&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;EthernetChecksumFixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;Data&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Number&gt;</span><br><span class="line"></span><br><span class="line">&lt;Number size=<span class="string">&quot;32&quot;</span>&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;ExpressionFixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;Data&quot;</span> /&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;expression&quot;</span> value=<span class="string">&quot;len(data) % 3&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Number&gt;</span><br><span class="line"></span><br><span class="line">&lt;Number size=<span class="string">&quot;16&quot;</span>&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;IcmpChecksumFixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;Data&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Number&gt;</span><br><span class="line"></span><br><span class="line">&lt;Number size=<span class="string">&quot;32&quot;</span>&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;LRCFixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;Data&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Number&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义校验和"><a href="#自定义校验和" class="headerlink" title="自定义校验和"></a>自定义校验和</h3><p>上面的校验和算法较少，且不灵活，下面介绍如何使用Python自定义校验和算法（网上没找到相关的资料，通过看源码和调试得到解决方案）。步骤如下：</p>
+<ul>
+<li>编写Python模块：__init__函数必须要有，fixup函数需要我们实现，输入参数为 C# 类型的数据，返回值需要为整型（与引用脚本处使用的Number类型一致）。为方便Python处理输入，需要将C#类型的输入转换为Python字节数组。</li>
+<li>导入Python模块：在DataModel的上方使用 Import import&#x3D;”Python文件名”  导入 。直接写文件名的话，文件需要放在 peach.exe 所在的路径下。</li>
+<li>绑定元素：Fixup class&#x3D;”ScriptFixup”，里面的子元素 class 写上 Python文件中的类名（文件名.类名），ref 写上用于计算校验和的元素名。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FixupChecksum</span>:</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, parent</span>):</span><br><span class="line">		<span class="variable language_">self</span>._parent = parent</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">fixup</span>(<span class="params">self, input_bytes</span>):</span><br><span class="line">		<span class="comment"># 返回所有字节异或的结果</span></span><br><span class="line">		input_data = []</span><br><span class="line">		<span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(input_bytes.Value.Length):</span><br><span class="line">			input_data.append(<span class="built_in">int</span>(input_bytes.Value.ReadByte()))</span><br><span class="line">		input_bytes = <span class="built_in">bytes</span>(input_data)</span><br><span class="line">		result = <span class="number">0</span></span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(input_bytes)):</span><br><span class="line">			result ^= <span class="built_in">ord</span>(input_bytes[i])</span><br><span class="line">		<span class="keyword">return</span> result</span><br><span class="line">		</span><br><span class="line"></span><br><span class="line">&lt;Import <span class="keyword">import</span>=<span class="string">&quot;checksum_test&quot;</span> /&gt;</span><br><span class="line">	&lt;DataModel name=<span class="string">&quot;data&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">		&lt;Block name=<span class="string">&quot;Header&quot;</span> mutable=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line">		  &lt;Number name=<span class="string">&quot;trans_id&quot;</span> size=<span class="string">&quot;16&quot;</span> value=<span class="string">&quot;0001&quot;</span> mutable=<span class="string">&quot;false&quot;</span> endian=<span class="string">&quot;big&quot;</span>/&gt;</span><br><span class="line">		  &lt;Number name=<span class="string">&quot;proto_id&quot;</span> size=<span class="string">&quot;16&quot;</span>  value=<span class="string">&quot;0000&quot;</span> valueType=<span class="string">&quot;hex&quot;</span>  endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;false&quot;</span> /&gt;</span><br><span class="line">		  &lt;Number name=<span class="string">&quot;unit_id&quot;</span> size=<span class="string">&quot;8&quot;</span> value=<span class="string">&quot;01&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span> mutable=<span class="string">&quot;false&quot;</span> /&gt;</span><br><span class="line">		&lt;/Block&gt;</span><br><span class="line">		&lt;Number name=<span class="string">&quot;ChecksumField&quot;</span> size=<span class="string">&quot;16&quot;</span> valueType=<span class="string">&quot;hex&quot;</span> endian=<span class="string">&quot;network&quot;</span>&gt;</span><br><span class="line">			&lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;ScriptFixup&quot;</span>&gt;</span><br><span class="line">				&lt;Param name=<span class="string">&quot;class&quot;</span> value=<span class="string">&quot;checksum_test.FixupChecksum&quot;</span> /&gt;</span><br><span class="line">				&lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;Header&quot;</span> /&gt;</span><br><span class="line">			&lt;/Fixup&gt;</span><br><span class="line">		&lt;/Number&gt;</span><br><span class="line">	&lt;/DataModel&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="hash计算"><a href="#hash计算" class="headerlink" title="hash计算"></a>hash计算</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&lt;Blob&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;MD5Fixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;value&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Blob&gt;</span><br><span class="line"></span><br><span class="line">&lt;Blob&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;SHA1Fixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;value&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Blob&gt;</span><br><span class="line"></span><br><span class="line">&lt;Blob&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;SHA224Fixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;value&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Blob&gt;</span><br><span class="line"></span><br><span class="line">&lt;Blob&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;SHA256Fixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;value&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Blob&gt;</span><br><span class="line"></span><br><span class="line">&lt;Blob&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;SHA384Fixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;value&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Blob&gt;</span><br><span class="line"></span><br><span class="line">&lt;Blob&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;SHA512Fixup&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;value&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Blob&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="序列号生成"><a href="#序列号生成" class="headerlink" title="序列号生成"></a>序列号生成</h3><p>分为递增序列号和随机序列号。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">递增</span><br><span class="line">&lt;Number name=<span class="string">&quot;UniqueValue&quot;</span> size=<span class="string">&quot;16&quot;</span>&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;SequenceIncrementFixup&quot;</span> /&gt;</span><br><span class="line">&lt;/Number&gt;</span><br><span class="line"></span><br><span class="line">随机</span><br><span class="line">&lt;Number name=<span class="string">&quot;UniqueValue&quot;</span> size=<span class="string">&quot;16&quot;</span>&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;SequenceRandomFixup&quot;</span> /&gt;</span><br><span class="line">&lt;/Number&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="值拷贝"><a href="#值拷贝" class="headerlink" title="值拷贝"></a>值拷贝</h3><p>让当前元素的值等于指定元素的值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;Number size=<span class="string">&quot;16&quot;</span>&gt;</span><br><span class="line">  &lt;Fixup <span class="keyword">class</span>=<span class="string">&quot;CopyValueFixup&quot;</span>&gt;</span><br><span class="line">        &lt;Param name=<span class="string">&quot;ref&quot;</span> value=<span class="string">&quot;ValueToCopy&quot;</span> /&gt;</span><br><span class="line">  &lt;/Fixup&gt;</span><br><span class="line">&lt;/Number&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Transformer"><a href="#Transformer" class="headerlink" title="Transformer"></a>Transformer</h2><p>Transformer标签用于对元素进行编码，作用于父元素，使用方式如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;Block name=<span class="string">&quot;base64Block&quot;</span>&gt;</span><br><span class="line">  &lt;Transformer <span class="keyword">class</span>=<span class="string">&quot;Base64Encode&quot;</span> /&gt;</span><br><span class="line">  &lt;Blob name=<span class="string">&quot;Data&quot;</span> /&gt;</span><br><span class="line">&lt;/Block&gt;</span><br><span class="line"></span><br><span class="line">除 Base64Encode 之外还支持：</span><br><span class="line">Bz2Compress</span><br><span class="line">Bz2Decompress</span><br><span class="line">GzipCompress</span><br><span class="line">GzipDecompress</span><br><span class="line">Base64Encode</span><br><span class="line">Base64Decode</span><br><span class="line">UrlEncode</span><br><span class="line">UrlEncodePlus</span><br><span class="line">Utf8</span><br><span class="line">Utf16</span><br><span class="line">Utf16Le</span><br><span class="line">Utf16Be</span><br><span class="line">WideChar</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hint"><a href="#Hint" class="headerlink" title="Hint"></a>Hint</h2><p>Hint标签用在数据标签里，用于为字段添加一些特定的变异器，常见的有 NumericalString、TypeTransform。语法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;String name=<span class="string">&quot;str&quot;</span> value=<span class="string">&quot;hello&quot;</span> nullTerminated=<span class="string">&quot;true&quot;</span>&gt;</span><br><span class="line">	&lt;Hint name=<span class="string">&quot;NumericalString&quot;</span> value=<span class="string">&quot;true&quot;</span> /&gt;</span><br><span class="line">&lt;/String&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="变异器（Mutator）"><a href="#变异器（Mutator）" class="headerlink" title="变异器（Mutator）"></a>变异器（Mutator）</h1><p>变异器分为状态变异器 StateMutator 和数据变异器 DataMutator。peach 状态切换相关的资料较少，暂不清楚如何进行状态定义与切换，本文主要介绍数据变异器 DataMutator。</p>
+<ul>
+<li>可以在Test标签中通过include和exclude关键词来选择和排除对应的mutator。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;Test name=<span class="string">&quot;Default&quot;</span>&gt;</span><br><span class="line">    &lt;StateModel ref=<span class="string">&quot;stateModel1&quot;</span> /&gt;</span><br><span class="line">    &lt;Publisher ref=<span class="string">&quot;publisher1&quot;</span> /&gt;</span><br><span class="line">    &lt;Mutators mode=<span class="string">&quot;exclude&quot;</span>&gt;</span><br><span class="line">        &lt;Mutator <span class="keyword">class</span>=<span class="string">&quot;DataElementDuplicate&quot;</span>/&gt;</span><br><span class="line">        &lt;Mutator <span class="keyword">class</span>=<span class="string">&quot;DataElementRemove&quot;</span>/&gt;</span><br><span class="line">        &lt;Mutator <span class="keyword">class</span>=<span class="string">&quot;DataElementSwapNearNodes&quot;</span>/&gt;</span><br><span class="line">        &lt;Mutator <span class="keyword">class</span>=<span class="string">&quot;DataElementSwapNear&quot;</span>/&gt;</span><br><span class="line">    &lt;/Mutators&gt;</span><br><span class="line">&lt;/Test&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/image%206.png" alt="image.png"></p>
+<p><img src="/image%207.png" alt="image.png"></p>
+<ul>
+<li>第一个数据包为定义的原始数据包，不会进行变异，此阶段用来准备变异器为后续数据包变异做准备。</li>
+</ul>
+<p><img src="/image%208.png" alt="image.png"></p>
+<h2 id="StateMutator"><a href="#StateMutator" class="headerlink" title="StateMutator"></a>StateMutator</h2><ol>
+<li>ActionDuplicate</li>
+<li>ActionRemove</li>
+<li>ActionSwap</li>
+<li>StateChangeRandom</li>
+</ol>
+<h2 id="DataMutator"><a href="#DataMutator" class="headerlink" title="DataMutator"></a>DataMutator</h2><p>每个变异器支持的元素类型，需要将元素 mutable 设为 true</p>
+<ol>
+<li>ArrayEdgeCase：必须为 Sequence，且元素数量不为 0</li>
+<li>ArrayRandomizeOrder：必须为 Sequence，且元素数量大于 1</li>
+<li>ArrayReverseOrder：必须为 Sequence，且元素数量大于 1</li>
+<li>ArrayVariance：必须为 Sequence，且元素数量不为 0</li>
+<li>BlobChangeFromNull：元素为 Blob，且内容不为空</li>
+<li>BlobChangeRandom：元素为 Blob，且内容不为空</li>
+<li>BlobChangeSpecial：元素为 Blob，且内容不为空</li>
+<li>BlobChangeToNull：元素为 Blob，且内容不为空</li>
+<li>BlobExpandAllRandom：元素为 Blob</li>
+<li>BlobExpandSingleIncrementing：元素为 Blob</li>
+<li>BlobExpandSingleRandom：元素为 Blob</li>
+<li>BlobExpandZero：元素为 Blob</li>
+<li>BlobReduce：元素为 Blob，且内容不为空</li>
+<li>ChoiceSwitch：元素为 Choice，选项大于 1</li>
+<li>DataElementBitFlipper：所有元素，内容不为空</li>
+<li>DataElementDuplicate：元素不为 Choice、Flag，内容不为空</li>
+<li>DataElementRemove：元素不为 Choice、Flag，父元素不为空</li>
+<li>DataElementSwapNear：元素不为 Flag，下一个元素存在，父元素不为空</li>
+<li>DoubleEdgeCase：hint 为 NumericalString 的字符串；长度为 32 或 64 的 Double</li>
+<li>DoubleRandom：hint 为 NumericalString 的字符串；长度为 32 或 64 的 Double</li>
+<li>DoubleVariance：hint 为 NumericalString 的字符串；不为 nan 和 inf 的 Double</li>
+<li>ExtraValues：hint 为 ExtraValues 的 String、Number、Blob</li>
+<li>NumberEdgeCase：hint 为 NumericalString 的字符串；长度大于 8 bit 的 Number</li>
+<li>NumberRandom：hint 为 NumericalString 的字符串；长度大于 8 bit 的 Number</li>
+<li>NumberVariance：hint 为 NumericalString 的字符串；Number</li>
+<li>SampleNinja：需要定义 ninja db</li>
+<li>SizedDataEdgeCase：拥有 size Relation 的元素</li>
+<li>SizedDataVariance：拥有 size Relation 的元素</li>
+<li>SizedEdgeCase：拥有 size Relation 的元素</li>
+<li>SizedVariance：拥有 size Relation 的元素</li>
+<li>StringAsciiRandom：元素为字符串</li>
+<li>StringCaseLower：元素为字符串且包含大写字符</li>
+<li>StringCaseRandom：元素为字符串且不能全为大写或小写字符</li>
+<li>StringCaseUpper：元素为字符串且包含小写字符</li>
+<li>StringLengthEdgeCase：元素为字符串</li>
+<li>StringLengthVariance：元素为字符串</li>
+<li>StringList：元素为字符串，hint 为 StringList</li>
+<li>StringSqlInjection：元素为字符串</li>
+<li>StringStatic：元素为字符串</li>
+<li>StringUnicodeAbstractCharacters：元素为字符串且不为 ascii 编码</li>
+<li>StringUnicodeFormatCharacters：元素为字符串且不为 ascii 编码</li>
+<li>StringUnicodeInvalid：元素为字符串且不为 ascii 编码</li>
+<li>StringUnicodeNonCharacters：元素为字符串且不为 ascii 编码</li>
+<li>StringUnicodePlane0：元素为字符串且不为 ascii 编码</li>
+<li>StringUnicodePlane1：元素为字符串且不为 ascii 编码</li>
+<li>StringUnicodePlane14：元素为字符串且不为 ascii 编码</li>
+<li>StringUnicodePlane15And16：元素为字符串且不为 ascii 编码</li>
+<li>StringUnicodePlane2：元素为字符串且不为 ascii 编码</li>
+<li>StringUnicodePrivateUseArea：元素为字符串且不为 ascii 编码</li>
+<li>StringUtf16BomLength：元素为字符串且不为 ascii 编码，hint 为 TypeTransform</li>
+<li>StringUtf16BomStatic：元素为字符串且不为 ascii 编码，hint 为 TypeTransform</li>
+<li>StringUtf32BomLength：元素为字符串且不为 ascii 编码，hint 为 TypeTransform</li>
+<li>StringUtf32BomStatic：元素为字符串且不为 ascii 编码，hint 为 TypeTransform</li>
+<li>StringUtf8BomLength：元素为字符串，hint 为 TypeTransform</li>
+<li>StringUtf8BomStatic：元素为字符串，hint 为 TypeTransform</li>
+<li>StringUtf8ExtraBytes：元素为字符串，hint 为 TypeTransform，元素内容不为空</li>
+<li>StringUtf8Invalid：元素为字符串，hint 为 TypeTransform，元素内容不为空</li>
+</ol>
+<h1 id="变异策略（Strategy）"><a href="#变异策略（Strategy）" class="headerlink" title="变异策略（Strategy）"></a>变异策略（Strategy）</h1><p>多进程与非确定性变异策略，无法计数。</p>
+<h2 id="Sequential"><a href="#Sequential" class="headerlink" title="Sequential"></a>Sequential</h2><p>对于所有mutable为true的元素（包括DataModel和Block），依次使用所有变异器和变异器返回的结果，每次只变异一个元素。（如某个变异器返回的结果为1-255所有的整数，变异器结果会按顺序返回）</p>
+<h2 id="RandomStrategy"><a href="#RandomStrategy" class="headerlink" title="RandomStrategy"></a>RandomStrategy</h2><p>对于所有mutable为true的元素（包括DataModel和Block），随机选择最多N个元素进行变异（默认N为6，），每个需要变异的元素随机使用变异器和变异器返回的结果。最多变异元素的定义如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Strategy <span class="keyword">class</span>=<span class="string">&quot;Random&quot;</span>&gt;</span><br><span class="line">    &lt;Param name=<span class="string">&quot;MaxFieldsToMutate&quot;</span> value=<span class="string">&quot;15&quot;</span> /&gt;</span><br><span class="line">&lt;/Strategy&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="RandomDeterministicStrategy"><a href="#RandomDeterministicStrategy" class="headerlink" title="RandomDeterministicStrategy"></a>RandomDeterministicStrategy</h2><p>对于所有mutable为true的元素（包括DataModel和Block），随机使用所有变异器，依次使用所有变异器返回的结果，每次只变异一个元素。</p>
+<h1 id="实用技巧"><a href="#实用技巧" class="headerlink" title="实用技巧"></a>实用技巧</h1><ul>
+<li>运行peach时加上—debug可以打印出发送的数据包。</li>
+<li>运行peach时加上—seed 123可以指定seed，让多次运行时Random策略每次变异的元素和选择的变异器相同，便于复现问题。</li>
+</ul>
+<h1 id="与-boofuzz-对比"><a href="#与-boofuzz-对比" class="headerlink" title="与 boofuzz 对比"></a>与 boofuzz 对比</h1><p>peach 中提供了较多的标签用于对文件格式进行模糊测试。本文仅比较网络模糊测试。</p>
+<h2 id="变异器"><a href="#变异器" class="headerlink" title="变异器"></a>变异器</h2><p>peach 的变异器更多一点。但是，个人觉得对于黑盒模糊测试，两者变异器差距不大。</p>
+<h2 id="变异策略"><a href="#变异策略" class="headerlink" title="变异策略"></a>变异策略</h2><ul>
+<li>boofuzz 只有默认的变异策略。虽然 boofuzz 通过组合的方式，遍历所有可能的变异器组合，但是效率较低。</li>
+<li>peach 支持Sequential、Random、RandomDeterministic 3种变异策略。Random 支持同时对多个元素进行变异，效率较高。</li>
+</ul>
+<h2 id="数据定义"><a href="#数据定义" class="headerlink" title="数据定义"></a>数据定义</h2><ul>
+<li>boofuzz使用函数调用的方式定义数据。</li>
+<li>peach使用xml定义数据比较方便和直观。</li>
+</ul>
+<h2 id="状态定义"><a href="#状态定义" class="headerlink" title="状态定义"></a>状态定义</h2><ul>
+<li>boofuzz 中状态定义和状态之间的关系直接connect就行。</li>
+<li>peach 提供了State和Action标签，但相关文档较少，暂不清楚如何使用。</li>
+</ul>
+<h2 id="自定义函数"><a href="#自定义函数" class="headerlink" title="自定义函数"></a>自定义函数</h2><ul>
+<li>boofuzz 基于Python开发的，自定义函数使用的是Python的数据结构，比较方便。</li>
+<li>peach 基于C#开发，自定义函数需要先通过C#函数进行类型转换。</li>
+</ul>
+<h2 id="结果查看"><a href="#结果查看" class="headerlink" title="结果查看"></a>结果查看</h2><ul>
+<li>boofuzz 会将每次 fuzz 的日志以 sqlite 数据库的形式存储在当前目录下，可以使用命令 <code>boo open xxx.db</code> 打开网页进行查看。</li>
+<li>peach需要实时抓包查看。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>对于单一状态的网络模糊测试，建议使用peach。</li>
+<li>对于多状态或需要自定义函数的网络模糊测试，建议使用boofuzz。</li>
+</ul>
+</div></article><aside class="post-widget"><h4>In this article</h4><nav class="post-toc-wrap" id="post-toc"><ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%89%8D%E8%A8%80"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#peach2"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">peach2</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#peach3-%E5%92%8C-peach4"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">peach3 和 peach4</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="post-toc-number">2.</span> <span class="post-toc-text">环境搭建</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#IDE-%E4%BD%BF%E7%94%A8"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">IDE 使用</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%85%83%E7%B4%A0"><span class="post-toc-number">3.</span> <span class="post-toc-text">基本元素</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#DataModel"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">DataModel</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Block"><span class="post-toc-number">3.1.1.</span> <span class="post-toc-text">Block</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Number"><span class="post-toc-number">3.1.2.</span> <span class="post-toc-text">Number</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Double"><span class="post-toc-number">3.1.3.</span> <span class="post-toc-text">Double</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Blob"><span class="post-toc-number">3.1.4.</span> <span class="post-toc-text">Blob</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Choice"><span class="post-toc-number">3.1.5.</span> <span class="post-toc-text">Choice</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Flag"><span class="post-toc-number">3.1.6.</span> <span class="post-toc-text">Flag</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Padding"><span class="post-toc-number">3.1.7.</span> <span class="post-toc-text">Padding</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#String"><span class="post-toc-number">3.1.8.</span> <span class="post-toc-text">String</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Relation"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">Relation</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E9%95%BF%E5%BA%A6"><span class="post-toc-number">3.2.1.</span> <span class="post-toc-text">长度</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E9%87%8D%E5%A4%8D%E6%AC%A1%E6%95%B0"><span class="post-toc-number">3.2.2.</span> <span class="post-toc-text">重复次数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%81%8F%E7%A7%BB"><span class="post-toc-number">3.2.3.</span> <span class="post-toc-text">偏移</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Fixup"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">Fixup</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E6%A0%A1%E9%AA%8C%E5%92%8C%E8%AE%A1%E7%AE%97"><span class="post-toc-number">3.3.1.</span> <span class="post-toc-text">校验和计算</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%A1%E9%AA%8C%E5%92%8C"><span class="post-toc-number">3.3.2.</span> <span class="post-toc-text">自定义校验和</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#hash%E8%AE%A1%E7%AE%97"><span class="post-toc-number">3.3.3.</span> <span class="post-toc-text">hash计算</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%BA%8F%E5%88%97%E5%8F%B7%E7%94%9F%E6%88%90"><span class="post-toc-number">3.3.4.</span> <span class="post-toc-text">序列号生成</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#%E5%80%BC%E6%8B%B7%E8%B4%9D"><span class="post-toc-number">3.3.5.</span> <span class="post-toc-text">值拷贝</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Transformer"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">Transformer</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Hint"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">Hint</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%8F%98%E5%BC%82%E5%99%A8%EF%BC%88Mutator%EF%BC%89"><span class="post-toc-number">4.</span> <span class="post-toc-text">变异器（Mutator）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#StateMutator"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">StateMutator</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#DataMutator"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">DataMutator</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%8F%98%E5%BC%82%E7%AD%96%E7%95%A5%EF%BC%88Strategy%EF%BC%89"><span class="post-toc-number">5.</span> <span class="post-toc-text">变异策略（Strategy）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Sequential"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">Sequential</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#RandomStrategy"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">RandomStrategy</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#RandomDeterministicStrategy"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">RandomDeterministicStrategy</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E5%AE%9E%E7%94%A8%E6%8A%80%E5%B7%A7"><span class="post-toc-number">6.</span> <span class="post-toc-text">实用技巧</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E4%B8%8E-boofuzz-%E5%AF%B9%E6%AF%94"><span class="post-toc-number">7.</span> <span class="post-toc-text">与 boofuzz 对比</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%8F%98%E5%BC%82%E5%99%A8"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">变异器</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E5%8F%98%E5%BC%82%E7%AD%96%E7%95%A5"><span class="post-toc-number">7.2.</span> <span class="post-toc-text">变异策略</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E6%95%B0%E6%8D%AE%E5%AE%9A%E4%B9%89"><span class="post-toc-number">7.3.</span> <span class="post-toc-text">数据定义</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E7%8A%B6%E6%80%81%E5%AE%9A%E4%B9%89"><span class="post-toc-number">7.4.</span> <span class="post-toc-text">状态定义</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0"><span class="post-toc-number">7.5.</span> <span class="post-toc-text">自定义函数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E7%BB%93%E6%9E%9C%E6%9F%A5%E7%9C%8B"><span class="post-toc-number">7.6.</span> <span class="post-toc-text">结果查看</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#%E6%80%BB%E7%BB%93"><span class="post-toc-number">7.7.</span> <span class="post-toc-text">总结</span></a></li></ol></li></ol></nav></aside></div><footer class="footer-nav"><div class="footer"><div class="back-top" id="back-top" title="Back to top"><i class="icon icon-chevron-bar-up"></i></div><div class="footer-content"><div><span id="busuanzi_container_site_pv"><span id="busuanzi_value_site_pv">?</span>
+views
+</span><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">?</span>
+visits</span></div>
+
+Copyright &copy;
+2025<span class="time-divide">-</span>2026
+plight3.
+
+Power by
+<a href="https://hexo.io/" target="_blank" rel="external nofollow">Hexo</a>
+and
+<a href="https://github.com/Cerallin/hexo-theme-yuzu" target="_blank" rel="external nofollow" title="v3.2.7">Theme Yuzu</a>.</div></div></footer>
+<script>window.config = {
+  url_root: '/',
+  meta_path: 'meta.json',
+};
+</script>
+<script src="/js/theme/back-to-top.js"></script>
+
+
+<script src="/js/theme/clipboard.js"></script>
+
+
+<script src="/js/theme/loading.js"></script>
+
+
+<script src="/js/theme/navbar.js"></script>
+
+<script src="/js/theme/search.js"></script>
+
+<script src="/js/theme/toc.js"></script>
+<script>window.onload = function () {
+  for (const moduleName in Theme) {
+    const module = Theme[moduleName];
+    module.register();
+  }
+};</script></div><div class="search-modal" id="search-modal"><div class="card"><div class="card-head"><div class="search-box"><input class="search-input" id="search-input" placeholder="search"/><div class="search-button" id="search-button"><div class="icon icon-search"></div></div></div><div class="close-button"><div class="icon icon-x"></div></div></div><div class="card-body"><div class="search-count">search.total<span id="search-count-num">0</span>search result(s) in total.</div><div class="search-result" id="search-result"></div></div></div></div></body></html>
