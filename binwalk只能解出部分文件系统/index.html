@@ -1,0 +1,78 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content="&lt;hr&gt;
+&lt;p&gt;使用binwalk对某固件进行解包时发现只能解出部分文件系统，这里记录解决方法。&lt;/p&gt;"/><title>binwalk解包只解出部分文件系统
+-
+plight3's blog
+-
+
+</title><link rel="icon" href="/img/favicon.ico"/>
+<link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/helpers.css">
+
+<script src="/js/clipboard/clipboard.min.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+<script async="async" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 8.1.1"></head><body><div class="loading-wrapper" data-loading="data-loading"><div class="loading"><span></span><span></span><span></span></div></div><div class="page" data-filter="data-filter"><div class="head" data-show="data-show"><header class="head-header"><div class="head-author"><a class="head-author-link" href="/">plight3's blog</a></div><div class="head-right"><button class="bar-wrap" id="bar-wrap-toggle" title="menu button"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button><div class="head-item"><a class="search-button head-item-link"><span>Search</span>
+<i class="icon icon-search"></i></a></div><div class="head-item"></div></div></header>
+<div class="menubar-head" id="menubar"><ul class="menubar-ul"><li class="menubar-item"><i class="icon icon-chevron-right"></i>
+<a class="menubar-link" href="/categories/Security-Learning/">Security-Learning</a></li><li class="menubar-item"><i class="icon icon-chevron-right"></i>
+<a class="menubar-link" href="/categories/Misc/">Misc</a></li><li class="menubar-item" data-border="data-border"></li><li class="menubar-item"><i class="icon icon-archive"></i>
+<a class="menubar-link" href="/archives">Archives</a></li><li class="menubar-item"><i class="icon icon-tags"></i>
+<a class="menubar-link" href="/tags">Tags</a></li></ul><div class="menu-search-box search-button"><div>Search</div>
+<i class="icon icon-search"></i></div></div></div><div class="main" data-page="post"><article class="post" id="post"><header class="post-head"><h1 class="post-title"><a class="title" href="/binwalk%E5%8F%AA%E8%83%BD%E8%A7%A3%E5%87%BA%E9%83%A8%E5%88%86%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">binwalk解包只解出部分文件系统</a></h1></header><div class="post-meta"><div class="post-date"><time class="post-time" itemprop="datePublished" title="2026-04-13 23:30:00" datetime="2026-04-13T23:30:00.000Z">2026-04-13</time></div>|
+<div class="post-tag"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IoT-security/" rel="tag">IoT-security</a></li></ul></div>
+<div class="post-visit"><span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv"></span>hits</span></div></div><div class="post-info"><div class="post-word-count">This article contains 487 words.</div>
+</div><div class="article-entry" itemprop="articleBody"><hr>
+<p>使用binwalk对某固件进行解包时发现只能解出部分文件系统，这里记录解决方法。</p>
+<span id="more"></span>
+<h1 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h1><p>目标固件大小100MB左右，使用binwalk解包之后得到的文件系统大小为20MB，越想越觉得不对劲：</p>
+<ol>
+<li>固件本身一般是压缩过的，压缩后的大小都有100MB，解压之后即使有一些驱动文件也不可能才20MB。</li>
+<li>与业务相关的二进制和Web程序一个没找到。因为能解出来部分文件系统，也不太可能有加密。</li>
+</ol>
+<h1 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h1><p>和同事在沟通的过程中发现他电脑上binwalk解包出来的文件系统比我解出来的还要少，突然意识到可能是binwalk的版本问题。</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/refirmlabs/binwalk">binwalk</a> 现在最新版本为V3.1.X，而 ubuntu22 上 apt install 安装的默认版本才V2.3.X，同事电脑上ubuntu18的binwalk版本才V2.1.X。</li>
+<li>一个比较好用的固件解包<a target="_blank" rel="noopener" href="https://zhiwanyuzhou.com/multiple_analyse/firmware/">网站</a> （之前总是能解出来一些本地解不出来的文件系统）上描述网站解包功能的实现时也只说了：“解包功能基于binwalk，收集了公开解密工具”。因此，猜测这个网站在固件解包方面没有做什么优化，只是单纯的binwalk版本比较高。</li>
+</ol>
+<p>安装官方给的<a target="_blank" rel="noopener" href="https://github.com/ReFirmLabs/binwalk/wiki/Compile-From-Source">编译方法</a> 完成编译，注意事项：<br>1、Ubuntu22以上<br>2、先执行 <code>sudo apt autoremove binwalk</code> 卸载之前使用apt命令安装的binwalk<br>3、编译前先安装 <code>sudo apt-get install libbz2-dev 7zip</code> ,如果在按教程编译过程中提示缺少xx库，根据提示下载对应的库<br>4、编译完成后binwalk二进制在&#x2F;path&#x2F;to&#x2F;binwalk&#x2F;target&#x2F;release&#x2F;binwalk下，需要软链接到&#x2F;usr&#x2F;bin目录下，方便全局使用，使用命令（<strong>需要写binwalk的绝对路径</strong>） <code>sudo ln -sf /path/to/binwalk/target/release/binwalk /usr/bin/</code></p>
+</div></article><aside class="post-widget"><h4>In this article</h4><nav class="post-toc-wrap" id="post-toc"><ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E8%83%8C%E6%99%AF%E8%AF%B4%E6%98%8E"><span class="post-toc-number">1.</span> <span class="post-toc-text">背景说明</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="post-toc-number">2.</span> <span class="post-toc-text">解决办法</span></a></li></ol></nav></aside></div><footer class="footer-nav"><div class="footer"><div class="back-top" id="back-top" title="Back to top"><i class="icon icon-chevron-bar-up"></i></div><div class="footer-content"><div><span id="busuanzi_container_site_pv"><span id="busuanzi_value_site_pv">?</span>
+views
+</span><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">?</span>
+visits</span></div>
+
+Copyright &copy;
+2025<span class="time-divide">-</span>2026
+plight3.
+
+Power by
+<a href="https://hexo.io/" target="_blank" rel="external nofollow">Hexo</a>
+and
+<a href="https://github.com/Cerallin/hexo-theme-yuzu" target="_blank" rel="external nofollow" title="v3.2.7">Theme Yuzu</a>.</div></div></footer>
+<script>window.config = {
+  url_root: '/',
+  meta_path: 'meta.json',
+};
+</script>
+<script src="/js/theme/back-to-top.js"></script>
+
+
+<script src="/js/theme/clipboard.js"></script>
+
+
+<script src="/js/theme/loading.js"></script>
+
+
+<script src="/js/theme/navbar.js"></script>
+
+<script src="/js/theme/search.js"></script>
+
+<script src="/js/theme/toc.js"></script>
+<script>window.onload = function () {
+  for (const moduleName in Theme) {
+    const module = Theme[moduleName];
+    module.register();
+  }
+};</script></div><div class="search-modal" id="search-modal"><div class="card"><div class="card-head"><div class="search-box"><input class="search-input" id="search-input" placeholder="search"/><div class="search-button" id="search-button"><div class="icon icon-search"></div></div></div><div class="close-button"><div class="icon icon-x"></div></div></div><div class="card-body"><div class="search-count">search.total<span id="search-count-num">0</span>search result(s) in total.</div><div class="search-result" id="search-result"></div></div></div></div></body></html>
